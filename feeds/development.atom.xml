@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor</title><link href="/" rel="alternate"></link><link href="/feeds/development.atom.xml" rel="self"></link><id>/</id><updated>2013-07-28T12:00:00-04:00</updated><entry><title>My Emacs configuration for MATLAB, LaTeX, and Python</title><link href="/emacs-config.html" rel="alternate"></link><updated>2013-07-28T12:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2013-07-28:emacs-config.html</id><summary type="html">&lt;p&gt;Emacs is a main part of my daily life. I write code and papers using
+it, so you could say that anything that my research will leave
+(hopefully) for the next generations was probably typed using it. Not
+anybody loves Emacs, and I will not try to convince you to use
+it. This post is just a brief overview of all the Emacs goodness I
+found during the last years and I believe you should be using too, if
+you use Emacs to write anything in MATLAB, LaTeX and Python.&lt;/p&gt;
+&lt;p&gt;First things first: &lt;a class="reference external" href="http://batsov.com/prelude/"&gt;Prelude&lt;/a&gt; is the base configuration I have been
+using during the last years. Prelude is a sane base configuration that
+includes a lot of good things and saves a &lt;strong&gt;lot&lt;/strong&gt; of time. If you use
+any UNIX-like operating system, installing it is a matter of running
+this command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;curl -L http://git.io/epre | sh
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;as long as you already have Emacs 24 (if you are still using Emacs 23,
+go on and update it ASAP!). Note that this installs it to the default
+Emacs configuration folder (&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
+&lt;p&gt;I know that I said Prelude is a sane base configuration, but I don't
+like two things it includes by default: &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;guru-mode&lt;/span&gt;&lt;/tt&gt; (which basically
+disables keyboard arrows to force you to learn how to navigate using
+default Emacs commands) and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;whitespace-mode&lt;/span&gt;&lt;/tt&gt; (which renders
+whitespace characters with visible glyphs). To disable these (and to
+add anything to a Prelude-based Emacs configuration), edit (you may
+have to create it first) &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/personal/init.el&lt;/span&gt;&lt;/tt&gt; and add
+the following lines:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;;; Disable guru-mode (I like using arrows :p)
+(setq prelude-guru nil)
+;; Disable whitespace-mode
+(setq prelude-whitespace nil)
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Another thing you should do is to enable the Prelude modules you want
+to use (and disable the ones you are never going to need). To do it,
+copy &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/sample/prelude-modules.el&lt;/span&gt;&lt;/tt&gt; to
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/prelude-modules.el&lt;/span&gt;&lt;/tt&gt;, remove the comment symbols
+(&lt;tt class="docutils literal"&gt;;&lt;/tt&gt;) from the modules you want to use and comment the ones you
+don't want.&lt;/p&gt;
+&lt;div class="section" id="matlab"&gt;
+&lt;h2&gt;MATLAB&lt;/h2&gt;
+&lt;p&gt;While MATLAB has a decent GUI (and a nice graphical debugger), the
+editor is not very good (it does code completion, some hinting, and
+that's all). Also, in my experience, the GUI is not reliable under
+Linux. &lt;a class="reference external" href="http://matlab-emacs.sourceforge.net/"&gt;matlab-emacs&lt;/a&gt; is an Emacs package that adds a major mode to
+edit MATLAB code and also enables a MATLAB shell from inside Emacs. To
+install it, you can run this &lt;a class="reference external" href="http://matlab-emacs.cvs.sourceforge.net/viewvc/*checkout*/matlab-emacs/matlab-emacs/dl_emacs_support.m?revision=1.2&amp;amp;pathrev=MAIN"&gt;script&lt;/a&gt; from MATLAB to download all the
+files and save them to &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/personal/matlab-emacs&lt;/span&gt;&lt;/tt&gt;. Then,
+to make Emacs automatically open &lt;tt class="docutils literal"&gt;.m&lt;/tt&gt; files using &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;matlab-mode&lt;/span&gt;&lt;/tt&gt;
+and configure &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;matlab-shell&lt;/span&gt;&lt;/tt&gt;, add the following lines to
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/personal/init.el&lt;/span&gt;&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;;; Setting up matlab-mode
+(add-to-list &amp;#39;load-path &amp;quot;~/.emacs.d/personal/matlab-emacs&amp;quot;)
+(load-library &amp;quot;matlab-load&amp;quot;)
+(custom-set-variables
+ &amp;#39;(matlab-shell-command-switches &amp;#39;(&amp;quot;-nodesktop -nosplash&amp;quot;)))
+(add-hook &amp;#39;matlab-mode-hook &amp;#39;auto-complete-mode)
+(setq auto-mode-alist
+    (cons
+     &amp;#39;(&amp;quot;\\.m$&amp;quot; . matlab-mode)
+     auto-mode-alist))
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;There is much more in &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;matlab-emacs&lt;/span&gt;&lt;/tt&gt; than just code completion and
+the shell. You can use Emacs to debug MATLAB code, send selected
+regions to execute on MATLAB, and much more. Take a look at the following articles to have a better idea of the other features:&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://blog.angjookanazawa.com/post/8815280589/productivity-matlab-emacs-integration-more"&gt;http://blog.angjookanazawa.com/post/8815280589/productivity-matlab-emacs-integration-more&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://blogs.mathworks.com/community/2009/09/14/matlab-emacs-integration-is-back/"&gt;http://blogs.mathworks.com/community/2009/09/14/matlab-emacs-integration-is-back/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="python"&gt;
+&lt;h2&gt;Python&lt;/h2&gt;
+&lt;p&gt;Prelude includes a Python module, but if you look deeper you will see
+it just enables &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;subword-mode&lt;/span&gt;&lt;/tt&gt; (to make word moving commands jump
+inside CamelCase words) and disables &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;electric-indent-mode&lt;/span&gt;&lt;/tt&gt; (to
+disable automatic indentation after a line break), which is not much
+(and you may even disagree about this setup!). If you would like code
+completion, refactoring, code hinting, code navigation, inline
+documentation, and more, &lt;a class="reference external" href="https://github.com/jorgenschaefer/elpy"&gt;Elpy&lt;/a&gt; is a good option. Installing it
+depends on two steps, as it has both a Emacs and a Python package. You
+can simply follow these &lt;a class="reference external" href="https://github.com/jorgenschaefer/elpy/wiki/Installation"&gt;instructions&lt;/a&gt; and be happy with a boatload
+of features! You will also need to install either &lt;a class="reference external" href="http://rope.sourceforge.net/"&gt;Rope&lt;/a&gt; or &lt;a class="reference external" href="https://github.com/davidhalter/jedi"&gt;Jedi&lt;/a&gt;
+(from the Python side), which Elpy uses for code completion. Rope
+appears to have better refactoring features, so that's what I
+use. Note that you have to install Elpy and Rope to a place on your
+default &lt;tt class="docutils literal"&gt;PYTHONPATH&lt;/tt&gt;, which you can do by running &lt;tt class="docutils literal"&gt;pip
+install &lt;span class="pre"&gt;--user&lt;/span&gt; elpy rope&lt;/tt&gt;. This will install the packages to
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.local/lib/python2.7/site-packages&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="latex"&gt;
+&lt;h2&gt;LaTeX&lt;/h2&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://www.gnu.org/software/auctex/"&gt;AUCTeX&lt;/a&gt;, an amazing package for writing LaTeX using Emacs, is
+already included on Prelude (as long as you activate the LaTeX
+module). It supports auto-completing LaTex expressions and has a
+&amp;quot;magic compilation&amp;quot; command: &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;C-c&lt;/span&gt; &lt;span class="pre"&gt;C-c&lt;/span&gt;&lt;/tt&gt;. It checks the status of your
+folder and runs either latex/pdflatex, bibtex, or opens the output
+file.&lt;/p&gt;
+&lt;p&gt;RefTeX is another extension but it ships with Emacs since Emacs
+24.3. If your &lt;tt class="docutils literal"&gt;.tex&lt;/tt&gt; file includes a reference to a &lt;tt class="docutils literal"&gt;.bib&lt;/tt&gt; file,
+you can use the command &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;C-c&lt;/span&gt; [&lt;/tt&gt; to add a citation to any of the
+references listed on that file.&lt;/p&gt;
+&lt;p&gt;I also recommend using &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;writegood-mode&lt;/span&gt;&lt;/tt&gt; to detect use of weasel
+words, duplicate words and passive voice. You can install it by simply
+running the command &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;M-x&lt;/span&gt; &lt;span class="pre"&gt;package-install&lt;/span&gt; &lt;span class="pre"&gt;writegood-mode&lt;/span&gt;&lt;/tt&gt; directly
+from Emacs (as long as you are using Prelude as described previously).&lt;/p&gt;
+&lt;p&gt;This is the configuration I use for fine-tuning AUCTeX (use pdflatex by default, use RefTeX, configure viewers, enable &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;writegood-mode&lt;/span&gt;&lt;/tt&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;;; LaTeX configuration
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+
+(add-hook &amp;#39;LaTeX-mode-hook &amp;#39;visual-line-mode)
+(add-hook &amp;#39;LaTeX-mode-hook &amp;#39;flyspell-mode)
+(add-hook &amp;#39;LaTeX-mode-hook &amp;#39;LaTeX-math-mode)
+(add-hook &amp;#39;LaTeX-mode-hook &amp;#39;TeX-source-correlate-mode)
+
+(add-hook &amp;#39;LaTeX-mode-hook &amp;#39;turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+(setq TeX-PDF-mode t)
+
+(setq TeX-output-view-style
+    (quote
+     ((&amp;quot;^pdf$&amp;quot; &amp;quot;.&amp;quot; &amp;quot;evince -f %o&amp;quot;)
+      (&amp;quot;^html?$&amp;quot; &amp;quot;.&amp;quot; &amp;quot;iceweasel %o&amp;quot;))))
+
+;; Setting up writegood-mode
+(require &amp;#39;writegood-mode)
+(global-set-key &amp;quot;\C-cg&amp;quot; &amp;#39;writegood-mode)
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="extras"&gt;
+&lt;h2&gt;Extras&lt;/h2&gt;
+&lt;p&gt;If you want to tinker and add your own features to Emacs, you will
+probably want to learn some Emacs Lisp. This is a nice and brief
+tutorial to get a grasp of it:
+&lt;a class="reference external" href="http://bzg.fr/learn-emacs-lisp-in-15-minutes.html"&gt;http://bzg.fr/learn-emacs-lisp-in-15-minutes.html&lt;/a&gt; (and this should be
+useful even if you don't want to create your own extensions, but just
+add some fancy things to your Emacs config!).&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="development"></category></entry><entry><title>WinPython: a portable scientific Python distribution for Windows</title><link href="/winpython.html" rel="alternate"></link><updated>2013-06-25T21:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2013-06-25:winpython.html</id><summary type="html">&lt;p&gt;Recently I developed a &lt;a class="reference external" href="http://bitbucket.org/jfsantos/sitest"&gt;piece of software&lt;/a&gt; for administering speech
+intelligibility listening tests and discovered a small issue: I am not
+an administrator of the computer that I am going to use for the tests,
+so I cannot install any software. Since the computer is running
+Windows, there is no standard Python distribution there. I already
+knew &lt;a class="reference external" href="http://portablepython.com"&gt;Portable Python&lt;/a&gt;, which is (surprise!) a portable Python
+distribution that can be run from a USB storage device. However, the
+first version of my code was using PyAudio, which was not included in
+this distribution. Since this module uses binary wrappers to
+PortAudio, installation is not as straightforward as copying a bunch
+of .py files, and I could not find out how to install it to my USB
+drive... but then, WinPython came to the rescue!&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://code.google.com/p/winpython/"&gt;WinPython&lt;/a&gt; is a complete
+NumPy/SciPy portable development environment, which also includes an
+IDE (&lt;a class="reference external" href="https://code.google.com/p/spyderlib/"&gt;Spyder&lt;/a&gt;), my favorite
+version control system (Mercurial) and Qt tools for GUI
+development. However, what made me like it so much is the WinPython
+Package Manager (&lt;a class="reference external" href="https://code.google.com/p/winpython/wiki/WPPM"&gt;WPPM&lt;/a&gt;), which allows one
+to install any packages that can be installed with &lt;em&gt;easy_install&lt;/em&gt;,
+&lt;em&gt;pip&lt;/em&gt;, or &lt;em&gt;distutils&lt;/em&gt; standard installers. The latter is specially
+interesting because &lt;em&gt;distutils&lt;/em&gt; installers include binary
+dependencies, so you do not need a C/C++ compiler. If scientific
+computing is your thing, maybe the library you need is just a visit to
+&lt;a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/"&gt;Christoph Gohlke's page&lt;/a&gt; away (which was my case
+with PyAudio).&lt;/p&gt;
+&lt;p&gt;Another interesting feature is the possibility of converting your
+portable distribution to a more &amp;quot;conventional&amp;quot; Python installation on
+Windows by adding some keys to the registry (this is also done through
+the WinPython Control Panel). Also, both Python 2.7 and Python 3.3 are
+available, with support to 32 and 64 bit Windows XP/7/8.&lt;/p&gt;
+</summary><category term="development"></category></entry><entry><title>Using Vagrant to make reproducible development and test environments</title><link href="/using-vagrant.html" rel="alternate"></link><updated>2013-05-19T16:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2013-05-19:using-vagrant.html</id><summary type="html">&lt;p&gt;Working with research-grade software is hard sometimes. We all have
+heard before (more than once, probably) the &amp;quot;it worked perfectly on my
+computer&amp;quot; story. The problem is that setting up a development
+environment takes a lot of time, and usually you'll end up forgetting
+which libraries and pieces of software you needed to install to get
+things running... and if you cannot figure out what did you have to do
+to get it working, let alone your colleagues that may need to use your
+code someday!&lt;/p&gt;
+&lt;p&gt;One simple way to try to mitigate this problem is to use virtual
+machines (VMs) as development and test environments. By developing
+your code on a VM, you can later distribute it instead of distributing
+your code only. I know that's not how serious people develop software,
+but let's be honest here: many research-grade software is developed on
+a &amp;quot;code and forget&amp;quot; paradigm. As soon as you publish your
+paper/thesis/whatever, you'll forget about it. Then, you will update
+your operating system, hardware, libraries. Then, months or years
+later, you will come up with a wonderful idea and think &amp;quot;I already
+have software for doing half of that!&amp;quot; just to find out that it does
+not work anymore... That's not nice.&lt;/p&gt;
+&lt;p&gt;Of course, developing and distributing software using VMs has other
+advantages. For collaborative projects, you can make sure everybody is
+working with the same versions of the libraries and
+compilers/interpreters. Also, it is a way of having access to another
+operating system such as Linux (if, like me, you are stuck with
+Windows for the time being).&lt;/p&gt;
+&lt;p&gt;One way of following this approach would be to have a &amp;quot;base&amp;quot; virtual
+machine and then, every time you start a new software project, you do
+this:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Make a copy from the base environment.&lt;/li&gt;
+&lt;li&gt;Install everything that you need on that copy, manually.&lt;/li&gt;
+&lt;li&gt;Develop your software, tests, etc.&lt;/li&gt;
+&lt;li&gt;Package the result and distribute (or archive) it.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;However, making copies and installing everything by hand is boring, so
+I chose to use an amazing tool called Vagrant to do a lot of this
+boring work for me. It is able to download base virtual machines (for
+example, a barebones Ubuntu VM), configure them, and install software
+on it automatically. All you need to do is write a couple of
+configuration files.&lt;/p&gt;
+&lt;div class="section" id="setting-up-vagrant-on-windows"&gt;
+&lt;h2&gt;Setting up Vagrant on Windows&lt;/h2&gt;
+&lt;p&gt;In order to set up and properly use Vagrant on Windows, you will need
+to install it and also VirtualBox, which is the default VM
+provider. It is also recommended that you install Git, which comes
+with a SSH client for Windows (that you can use to access the VM
+instead of using the default VirtualBox interface). You can find the
+installers on the following URLs:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Vagrant &lt;a class="reference external" href="http://downloads.vagrantup.com/tags/v1.2.2"&gt;http://downloads.vagrantup.com/tags/v1.2.2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;VirtualBox &lt;a class="reference external" href="http://www.virtualbox.org/wiki/Downloads"&gt;http://www.virtualbox.org/wiki/Downloads&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Git &lt;a class="reference external" href="http://www.git-scm.com/downloads"&gt;http://www.git-scm.com/downloads&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;By default, Vagrant will keep the downloaded base VMs at your home
+folder (&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;%USERPROFILE%\.vagrant.d&lt;/span&gt;&lt;/tt&gt;), but you can choose another
+folder by setting the environment variable &lt;tt class="docutils literal"&gt;%VAGRANT_HOME%&lt;/tt&gt; on
+Windows. Also, VirtualBox will store your VMs at
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;%USERPROFILE%\VirtualBox&lt;/span&gt; VMs&lt;/tt&gt;, but you can change it by opening
+VirtualBox preferences and changing the default VM folder. As both
+folders will end up storing a lot of data depending on how many VMs
+you use, it may be interesting to change both before starting to use
+the approach presented here.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="example-vm"&gt;
+&lt;h2&gt;Example VM&lt;/h2&gt;
+&lt;p&gt;I wrote a simple configuration file to use as an example for this
+post. The machine configuration is all done on this file (which is
+called &lt;em&gt;Vagrantfile&lt;/em&gt;) except for the software installation, which is
+done using a simple shell script. As you can see below, the
+configuration is very simple. To test it, just download both files,
+fire up a Git Bash session, go to this directory and run &lt;tt class="docutils literal"&gt;vagrant
+up&lt;/tt&gt;. This will start up the virtual machine and install all the
+required software on it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;Vagrant::Config.run do |config|
+  # All Vagrant configuration is done here. The most common configuration
+  # options are documented and commented below. For a complete reference,
+  # please see the online documentation at vagrantup.com.
+
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = &amp;quot;precise32&amp;quot;
+
+  # The url from where the &amp;#39;config.vm.box&amp;#39; box will be fetched if it
+  # doesn&amp;#39;t already exist on the user&amp;#39;s system.
+  config.vm.box_url = &amp;quot;http://files.vagrantup.com/precise32.box&amp;quot;
+
+  # Amount of RAM on the VM
+  config.vm.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--memory&amp;quot;, 512] # 512 MB RAM
+
+  # Boot with a GUI so you can see the screen. (Default is headless)
+  # config.vm.boot_mode = :gui
+
+  # Assign this VM to a host-only network IP, allowing you to access it
+  # via the IP. Host-only networks can talk to the host machine as well as
+  # any other machines on the same network, but cannot be accessed (through this
+  # network interface) by any external networks.
+  # config.vm.network :hostonly, &amp;quot;192.168.33.10&amp;quot;
+
+  # Assign this VM to a bridged network, allowing you to connect directly to a
+  # network using the host&amp;#39;s network device. This makes the VM appear as another
+  # physical device on your network.
+  config.vm.network :bridged
+
+  # Forward a port from the guest to the host, which allows for outside
+  # computers to access the VM, whereas host only networking does not.
+  config.vm.forward_port 8000, 8000
+
+  # Share an additional folder to the guest VM. The first argument is
+  # an identifier, the second is the path on the guest to mount the
+  # folder, and the third is the path on the host to the actual folder.
+  # config.vm.share_folder &amp;quot;v-data&amp;quot;, &amp;quot;/vagrant_data&amp;quot;, &amp;quot;../data&amp;quot;
+
+  # Enable provisioning with a shell script. Add the sequence of
+  # commands you want to run to provision the VM to provision.sh
+  config.vm.provision :shell, :path =&amp;gt; &amp;quot;provision.sh&amp;quot;
+end
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;For this example, we will simply add commands to install GNU Octave on
+the VM to the file &lt;tt class="docutils literal"&gt;provision.sh&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;export &lt;/span&gt;&lt;span class="nv"&gt;DEBIAN_FRONTEND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;noninteractive
+apt-get update &amp;gt; /dev/null
+apt-get -y install octave
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="accessing-the-vm-transferring-files-between-it-and-the-host"&gt;
+&lt;h2&gt;Accessing the VM, transferring files between it and the host&lt;/h2&gt;
+&lt;p&gt;The command &lt;tt class="docutils literal"&gt;vagrant up&lt;/tt&gt; leaves the machine running after the
+setup. To access it, just run &lt;tt class="docutils literal"&gt;ssh &lt;span class="pre"&gt;-p&lt;/span&gt; 2222 vagrant&amp;#64;localhost&lt;/tt&gt; (the
+password is &lt;em&gt;vagrant&lt;/em&gt;). You can also access the VM using VirtualBox's
+interface. In case you need graphical output or audio, this is the
+simplest way of accessing it (you should add &lt;tt class="docutils literal"&gt;config.vm.boot_mode =
+gui&lt;/tt&gt; to your Vagrantfile, too). Otherwise, SSH will work fine.&lt;/p&gt;
+&lt;p&gt;Another magic trick done by Vagrant is to set up shared folders, so
+sending files to the VM (and getting them from the VM) is easy. The
+folder where you store the configuration files is mounted with
+read-write access on the VM at &lt;tt class="docutils literal"&gt;/vagrant&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;To shut down the VM, use the commands &lt;tt class="docutils literal"&gt;vagrant halt&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;vagrant
+suspend&lt;/tt&gt; (the latter will save the machine state, which will be
+reloaded on the next time you start it).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="final-considerations"&gt;
+&lt;h2&gt;Final considerations&lt;/h2&gt;
+&lt;p&gt;That's it, basically. You can use &lt;a class="reference external" href="https://bitbucket.org/jfsantos/vagrant-example"&gt;these files&lt;/a&gt; as a starting point to
+design your own virtual machines. There are more complex ways of
+provisioning VMs, using tools such as Chef and Puppet, but that's out
+of the scope of this blog post. For an excellent example using Puppet,
+check out this &lt;a class="reference external" href="https://github.com/gavinln/stats_py_vm"&gt;Github project&lt;/a&gt; (which, in fact, is the project that
+inspired me to use VMs for software development in my research!). It
+sets up a VM with statistics and numerical libraries for Python.&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="development"></category></entry></feed>
