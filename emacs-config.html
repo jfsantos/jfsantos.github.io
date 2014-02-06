@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,700' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title> My Emacs configuration for MATLAB, LaTeX, and Python | seaandsailor </title>
+
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/font-awesome.css" type="text/css"/>
+        
+    <script type= "text/javascript">
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
+        s[(window.opera ? "innerHTML" : "text")] =
+            "MathJax.Hub.Config({" + 
+            "    config: ['MMLorHTML.js']," + 
+            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
+            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
+            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+            "    tex2jax: { " +
+            "        processEscapes: true }, " +
+            "    'HTML-CSS': { " +
+            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
+            "    } " +
+            "}); ";
+        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
+    </script>
+
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+            <li><a href="/index.html">Blog</a> </li>
+            <li><a href="/archives.html">Archive</a> </li>
+            <li><a href="/tags.html">Tags</a> </li>
+            <li><a href="http://jfsantos.bitbucket.org">Resume</a> </li>
+            <li><a href="/pages/about.html">About</a> </li>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+    <h1 class="title"> My Emacs configuration for MATLAB, LaTeX, and Python</h1>
+    <p class=date> 28 07 2013 </p>
+    <p>Emacs is a main part of my daily life. I write code and papers using
+it, so you could say that anything that my research will leave
+(hopefully) for the next generations was probably typed using it. Not
+anybody loves Emacs, and I will not try to convince you to use
+it. This post is just a brief overview of all the Emacs goodness I
+found during the last years and I believe you should be using too, if
+you use Emacs to write anything in MATLAB, LaTeX and Python.</p>
+<p>First things first: <a class="reference external" href="http://batsov.com/prelude/">Prelude</a> is the base configuration I have been
+using during the last years. Prelude is a sane base configuration that
+includes a lot of good things and saves a <strong>lot</strong> of time. If you use
+any UNIX-like operating system, installing it is a matter of running
+this command:</p>
+<div class="highlight"><pre>curl -L http://git.io/epre | sh
+</pre></div>
+<p>as long as you already have Emacs 24 (if you are still using Emacs 23,
+go on and update it ASAP!). Note that this installs it to the default
+Emacs configuration folder (<tt class="docutils literal"><span class="pre">$HOME/.emacs.d</span></tt>).</p>
+<p>I know that I said Prelude is a sane base configuration, but I don't
+like two things it includes by default: <tt class="docutils literal"><span class="pre">guru-mode</span></tt> (which basically
+disables keyboard arrows to force you to learn how to navigate using
+default Emacs commands) and <tt class="docutils literal"><span class="pre">whitespace-mode</span></tt> (which renders
+whitespace characters with visible glyphs). To disable these (and to
+add anything to a Prelude-based Emacs configuration), edit (you may
+have to create it first) <tt class="docutils literal"><span class="pre">$HOME/.emacs.d/personal/init.el</span></tt> and add
+the following lines:</p>
+<div class="highlight"><pre>;; Disable guru-mode (I like using arrows :p)
+(setq prelude-guru nil)
+;; Disable whitespace-mode
+(setq prelude-whitespace nil)
+</pre></div>
+<p>Another thing you should do is to enable the Prelude modules you want
+to use (and disable the ones you are never going to need). To do it,
+copy <tt class="docutils literal"><span class="pre">$HOME/.emacs.d/sample/prelude-modules.el</span></tt> to
+<tt class="docutils literal"><span class="pre">$HOME/.emacs.d/prelude-modules.el</span></tt>, remove the comment symbols
+(<tt class="docutils literal">;</tt>) from the modules you want to use and comment the ones you
+don't want.</p>
+<div class="section" id="matlab">
+<h2>MATLAB</h2>
+<p>While MATLAB has a decent GUI (and a nice graphical debugger), the
+editor is not very good (it does code completion, some hinting, and
+that's all). Also, in my experience, the GUI is not reliable under
+Linux. <a class="reference external" href="http://matlab-emacs.sourceforge.net/">matlab-emacs</a> is an Emacs package that adds a major mode to
+edit MATLAB code and also enables a MATLAB shell from inside Emacs. To
+install it, you can run this <a class="reference external" href="http://matlab-emacs.cvs.sourceforge.net/viewvc/*checkout*/matlab-emacs/matlab-emacs/dl_emacs_support.m?revision=1.2&amp;pathrev=MAIN">script</a> from MATLAB to download all the
+files and save them to <tt class="docutils literal"><span class="pre">$HOME/.emacs.d/personal/matlab-emacs</span></tt>. Then,
+to make Emacs automatically open <tt class="docutils literal">.m</tt> files using <tt class="docutils literal"><span class="pre">matlab-mode</span></tt>
+and configure <tt class="docutils literal"><span class="pre">matlab-shell</span></tt>, add the following lines to
+<tt class="docutils literal"><span class="pre">$HOME/.emacs.d/personal/init.el</span></tt>:</p>
+<div class="highlight"><pre>;; Setting up matlab-mode
+(add-to-list &#39;load-path &quot;~/.emacs.d/personal/matlab-emacs&quot;)
+(load-library &quot;matlab-load&quot;)
+(custom-set-variables
+ &#39;(matlab-shell-command-switches &#39;(&quot;-nodesktop -nosplash&quot;)))
+(add-hook &#39;matlab-mode-hook &#39;auto-complete-mode)
+(setq auto-mode-alist
+    (cons
+     &#39;(&quot;\\.m$&quot; . matlab-mode)
+     auto-mode-alist))
+</pre></div>
+<p>There is much more in <tt class="docutils literal"><span class="pre">matlab-emacs</span></tt> than just code completion and
+the shell. You can use Emacs to debug MATLAB code, send selected
+regions to execute on MATLAB, and much more. Take a look at the following articles to have a better idea of the other features:</p>
+<p><a class="reference external" href="http://blog.angjookanazawa.com/post/8815280589/productivity-matlab-emacs-integration-more">http://blog.angjookanazawa.com/post/8815280589/productivity-matlab-emacs-integration-more</a></p>
+<p><a class="reference external" href="http://blogs.mathworks.com/community/2009/09/14/matlab-emacs-integration-is-back/">http://blogs.mathworks.com/community/2009/09/14/matlab-emacs-integration-is-back/</a></p>
+</div>
+<div class="section" id="python">
+<h2>Python</h2>
+<p>Prelude includes a Python module, but if you look deeper you will see
+it just enables <tt class="docutils literal"><span class="pre">subword-mode</span></tt> (to make word moving commands jump
+inside CamelCase words) and disables <tt class="docutils literal"><span class="pre">electric-indent-mode</span></tt> (to
+disable automatic indentation after a line break), which is not much
+(and you may even disagree about this setup!). If you would like code
+completion, refactoring, code hinting, code navigation, inline
+documentation, and more, <a class="reference external" href="https://github.com/jorgenschaefer/elpy">Elpy</a> is a good option. Installing it
+depends on two steps, as it has both a Emacs and a Python package. You
+can simply follow these <a class="reference external" href="https://github.com/jorgenschaefer/elpy/wiki/Installation">instructions</a> and be happy with a boatload
+of features! You will also need to install either <a class="reference external" href="http://rope.sourceforge.net/">Rope</a> or <a class="reference external" href="https://github.com/davidhalter/jedi">Jedi</a>
+(from the Python side), which Elpy uses for code completion. Rope
+appears to have better refactoring features, so that's what I
+use. Note that you have to install Elpy and Rope to a place on your
+default <tt class="docutils literal">PYTHONPATH</tt>, which you can do by running <tt class="docutils literal">pip
+install <span class="pre">--user</span> elpy rope</tt>. This will install the packages to
+<tt class="docutils literal"><span class="pre">$HOME/.local/lib/python2.7/site-packages</span></tt>.</p>
+</div>
+<div class="section" id="latex">
+<h2>LaTeX</h2>
+<p><a class="reference external" href="https://www.gnu.org/software/auctex/">AUCTeX</a>, an amazing package for writing LaTeX using Emacs, is
+already included on Prelude (as long as you activate the LaTeX
+module). It supports auto-completing LaTex expressions and has a
+&quot;magic compilation&quot; command: <tt class="docutils literal"><span class="pre">C-c</span> <span class="pre">C-c</span></tt>. It checks the status of your
+folder and runs either latex/pdflatex, bibtex, or opens the output
+file.</p>
+<p>RefTeX is another extension but it ships with Emacs since Emacs
+24.3. If your <tt class="docutils literal">.tex</tt> file includes a reference to a <tt class="docutils literal">.bib</tt> file,
+you can use the command <tt class="docutils literal"><span class="pre">C-c</span> [</tt> to add a citation to any of the
+references listed on that file.</p>
+<p>I also recommend using <tt class="docutils literal"><span class="pre">writegood-mode</span></tt> to detect use of weasel
+words, duplicate words and passive voice. You can install it by simply
+running the command <tt class="docutils literal"><span class="pre">M-x</span> <span class="pre">package-install</span> <span class="pre">writegood-mode</span></tt> directly
+from Emacs (as long as you are using Prelude as described previously).</p>
+<p>This is the configuration I use for fine-tuning AUCTeX (use pdflatex by default, use RefTeX, configure viewers, enable <tt class="docutils literal"><span class="pre">writegood-mode</span></tt>):</p>
+<div class="highlight"><pre>;; LaTeX configuration
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+
+(add-hook &#39;LaTeX-mode-hook &#39;visual-line-mode)
+(add-hook &#39;LaTeX-mode-hook &#39;flyspell-mode)
+(add-hook &#39;LaTeX-mode-hook &#39;LaTeX-math-mode)
+(add-hook &#39;LaTeX-mode-hook &#39;TeX-source-correlate-mode)
+
+(add-hook &#39;LaTeX-mode-hook &#39;turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+(setq TeX-PDF-mode t)
+
+(setq TeX-output-view-style
+    (quote
+     ((&quot;^pdf$&quot; &quot;.&quot; &quot;evince -f %o&quot;)
+      (&quot;^html?$&quot; &quot;.&quot; &quot;iceweasel %o&quot;))))
+
+;; Setting up writegood-mode
+(require &#39;writegood-mode)
+(global-set-key &quot;\C-cg&quot; &#39;writegood-mode)
+</pre></div>
+</div>
+<div class="section" id="extras">
+<h2>Extras</h2>
+<p>If you want to tinker and add your own features to Emacs, you will
+probably want to learn some Emacs Lisp. This is a nice and brief
+tutorial to get a grasp of it:
+<a class="reference external" href="http://bzg.fr/learn-emacs-lisp-in-15-minutes.html">http://bzg.fr/learn-emacs-lisp-in-15-minutes.html</a> (and this should be
+useful even if you don't want to create your own extensions, but just
+add some fancy things to your Emacs config!).</p>
+</div>
+
+    
+<div class=twitter>
+<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+    <p class=tags>This entry was tagged as
+      <a href="/tag/development.html">development</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    <a href="https://github.com/fjavieralba/flasky">Theme</a>  by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'joao.eel';
+          s = 'gmail.com';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270"><li><i class="icon-linkedin-sign icon-large" ></i></li></a>
+        <a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="/feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+    <script type="text/javascript">
+        var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik-seaandsailor.rhcloud.com/" : "http://piwik-seaandsailor.rhcloud.com/");
+    document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+    </script><script type="text/javascript">
+    try {
+    var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+    piwikTracker.trackPageView();
+    piwikTracker.enableLinkTracking();
+    } catch( err ) {}
+    </script><noscript><p><img src="http://piwik-seaandsailor.rhcloud.com/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+  </body>
+</html>
