@@ -50,16 +50,16 @@
 processing techniques. Such approximations are usually employed with
 the objective of having a signal representation that is more
 meaningful, malleable, and robust to noise than the ones obtained by
-standard transform methods [1]. The so-called dictionary based methods
-(DBM) decompose a signal into a linear combination of waveforms
-through an approximation technique such as Matching Pursuit (MP) [2],
-Orthogonal Matching Pursuit (OMP) [3], or basis pursuit [4]. The
-collection of waveforms that can be selected for the linear
-combination is called a dictionary. This dictionary is usually
-overcomplete, either because it is formed by merging complete
-dictionaries or because the waveforms are chosen arbitrarily (and we
-have more waveforms than the length of the signal we want to
-represent).</p>
+standard transform methods <a class="citation-reference" href="#sturm2009" id="id1">[Sturm2009]</a>. The so-called dictionary
+based methods (DBM) decompose a signal into a linear combination of
+waveforms through an approximation technique such as Matching Pursuit
+(MP) <a class="citation-reference" href="#mallat1993" id="id2">[Mallat1993]</a>, Orthogonal Matching Pursuit (OMP) <a class="citation-reference" href="#pati1993" id="id3">[Pati1993]</a>, or
+basis pursuit <a class="citation-reference" href="#chen2001" id="id4">[Chen2001]</a>. The collection of waveforms that can be
+selected for the linear combination is called a dictionary. This
+dictionary is usually overcomplete, either because it is formed by
+merging complete dictionaries or because the waveforms are chosen
+arbitrarily (and we have more waveforms than the length of the signal
+we want to represent).</p>
 <div class="section" id="sparse-approximation-problem-formulations">
 <h2>Sparse approximation problem formulations</h2>
 <p>The sparse coding problem is usually formulated either as a
@@ -112,9 +112,10 @@ converges to a local minimum solution.</p>
 <p>For sparse coding, we want to use multiple atoms to reconstruct the
 signal. In the snippet below, we generate a dictionary with 1024
 waveforms by using the dictionary learning functions available in
-<a class="reference external" href="http://scikit-learn.org">scikit-learn</a>, which is based on a paper by <a class="reference external" href="http://www.di.ens.fr/sierra/pdfs/icml09.pdf">Mairal et al</a>. The training data
-consists of two minutes of audio from the TIMIT database; sentences
-were randomly chosen and then split into frames of 256 samples each.</p>
+<a class="reference external" href="http://scikit-learn.org">scikit-learn</a>, which is based on a paper by [Mairal et al]_. The
+training data consists of two minutes of audio from the TIMIT
+database; sentences were randomly chosen and then split into frames of
+256 samples each.</p>
 <pre class="code python literal-block">
 <span class="c"># Build the dictionary</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">MiniBatchDictionaryLearning</span>
@@ -198,6 +199,66 @@ in pylearn2 I was not able to get them working yet. <a class="reference external
 there's already a <a class="reference external" href="https://github.com/lisa-lab/pylearn2/pull/512">pull request</a> which solves this
 issue and it seems it will get fixed anytime soon.</p>
 <p>Last note: you can view the IPython notebook containing all the code used to generate the dictionary and the plots <a class="reference external" href="http://nbviewer.ipython.org/urls/seaandsailor.com/files/dictlearning.ipynb">here</a>, or <a class="reference external" href="files/dictlearning.ipynb">download</a> and run it interactively in your computer.</p>
+</div>
+<div class="section" id="references">
+<h2>References</h2>
+<table class="docutils citation" frame="void" id="sturm2009" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[Sturm2009]</a></td><td><ol class="first last upperalpha simple" start="2">
+<li><ol class="first upperalpha" start="12">
+<li>Sturm, C. Roads, A. McLeran, and J. J. Shynk, “Analysis, Visualization, and Transformation of Audio Signals Using Dictionary-based Methods†,” Journal of New Music Research, vol. 38, no. 4, pp. 325–341, 2009.</li>
+</ol>
+</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="mallat1993" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[Mallat1993]</a></td><td><ol class="first last upperalpha simple" start="19">
+<li><ol class="first upperalpha" start="7">
+<li>Mallat and Z. Zhang, “Matching pursuits with time-frequency dictionaries,” IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397–3415, Dec. 1993.</li>
+</ol>
+</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="pati1993" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[Pati1993]</a></td><td><ol class="first last upperalpha simple" start="25">
+<li><ol class="first upperalpha" start="3">
+<li>Pati, R. Rezaiifar, and P. S. Krishnaprasad, “Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition,” in Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on, 1993, pp. 40–44.</li>
+</ol>
+</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="chen2001" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[Chen2001]</a></td><td><ol class="first last upperalpha simple" start="19">
+<li><ol class="first upperalpha" start="19">
+<li>Chen, D. L. Donoho, and M. A. Saunders, “Atomic decomposition by basis pursuit,” SIAM journal on scientific computing, vol. 20, no. 1, pp. 33–61, 1998.</li>
+</ol>
+</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="mairal2009" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Mairal2009]</td><td><ol class="first last upperalpha simple" start="10">
+<li>Mairal, F. Bach, J. Ponce, and G. Sapiro, “Online dictionary learning for sparse coding,” in Proceedings of the 26th Annual International Conference on Machine Learning, 2009, pp. 689–696.</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
 </div>
 
     

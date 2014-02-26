@@ -3,16 +3,16 @@
 processing techniques. Such approximations are usually employed with
 the objective of having a signal representation that is more
 meaningful, malleable, and robust to noise than the ones obtained by
-standard transform methods [1]. The so-called dictionary based methods
-(DBM) decompose a signal into a linear combination of waveforms
-through an approximation technique such as Matching Pursuit (MP) [2],
-Orthogonal Matching Pursuit (OMP) [3], or basis pursuit [4]. The
-collection of waveforms that can be selected for the linear
-combination is called a dictionary. This dictionary is usually
-overcomplete, either because it is formed by merging complete
-dictionaries or because the waveforms are chosen arbitrarily (and we
-have more waveforms than the length of the signal we want to
-represent).&lt;/p&gt;
+standard transform methods &lt;a class="citation-reference" href="#sturm2009" id="id1"&gt;[Sturm2009]&lt;/a&gt;. The so-called dictionary
+based methods (DBM) decompose a signal into a linear combination of
+waveforms through an approximation technique such as Matching Pursuit
+(MP) &lt;a class="citation-reference" href="#mallat1993" id="id2"&gt;[Mallat1993]&lt;/a&gt;, Orthogonal Matching Pursuit (OMP) &lt;a class="citation-reference" href="#pati1993" id="id3"&gt;[Pati1993]&lt;/a&gt;, or
+basis pursuit &lt;a class="citation-reference" href="#chen2001" id="id4"&gt;[Chen2001]&lt;/a&gt;. The collection of waveforms that can be
+selected for the linear combination is called a dictionary. This
+dictionary is usually overcomplete, either because it is formed by
+merging complete dictionaries or because the waveforms are chosen
+arbitrarily (and we have more waveforms than the length of the signal
+we want to represent).&lt;/p&gt;
 &lt;div class="section" id="sparse-approximation-problem-formulations"&gt;
 &lt;h2&gt;Sparse approximation problem formulations&lt;/h2&gt;
 &lt;p&gt;The sparse coding problem is usually formulated either as a
@@ -65,9 +65,10 @@ converges to a local minimum solution.&lt;/p&gt;
 &lt;p&gt;For sparse coding, we want to use multiple atoms to reconstruct the
 signal. In the snippet below, we generate a dictionary with 1024
 waveforms by using the dictionary learning functions available in
-&lt;a class="reference external" href="http://scikit-learn.org"&gt;scikit-learn&lt;/a&gt;, which is based on a paper by &lt;a class="reference external" href="http://www.di.ens.fr/sierra/pdfs/icml09.pdf"&gt;Mairal et al&lt;/a&gt;. The training data
-consists of two minutes of audio from the TIMIT database; sentences
-were randomly chosen and then split into frames of 256 samples each.&lt;/p&gt;
+&lt;a class="reference external" href="http://scikit-learn.org"&gt;scikit-learn&lt;/a&gt;, which is based on a paper by [Mairal et al]_. The
+training data consists of two minutes of audio from the TIMIT
+database; sentences were randomly chosen and then split into frames of
+256 samples each.&lt;/p&gt;
 &lt;pre class="code python literal-block"&gt;
 &lt;span class="c"&gt;# Build the dictionary&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.decomposition&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;MiniBatchDictionaryLearning&lt;/span&gt;
@@ -151,6 +152,66 @@ in pylearn2 I was not able to get them working yet. &lt;a class="reference exter
 there's already a &lt;a class="reference external" href="https://github.com/lisa-lab/pylearn2/pull/512"&gt;pull request&lt;/a&gt; which solves this
 issue and it seems it will get fixed anytime soon.&lt;/p&gt;
 &lt;p&gt;Last note: you can view the IPython notebook containing all the code used to generate the dictionary and the plots &lt;a class="reference external" href="http://nbviewer.ipython.org/urls/seaandsailor.com/files/dictlearning.ipynb"&gt;here&lt;/a&gt;, or &lt;a class="reference external" href="files/dictlearning.ipynb"&gt;download&lt;/a&gt; and run it interactively in your computer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="references"&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;table class="docutils citation" frame="void" id="sturm2009" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[Sturm2009]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="2"&gt;
+&lt;li&gt;&lt;ol class="first upperalpha" start="12"&gt;
+&lt;li&gt;Sturm, C. Roads, A. McLeran, and J. J. Shynk, “Analysis, Visualization, and Transformation of Audio Signals Using Dictionary-based Methods†,” Journal of New Music Research, vol. 38, no. 4, pp. 325–341, 2009.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="mallat1993" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id2"&gt;[Mallat1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
+&lt;li&gt;&lt;ol class="first upperalpha" start="7"&gt;
+&lt;li&gt;Mallat and Z. Zhang, “Matching pursuits with time-frequency dictionaries,” IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397–3415, Dec. 1993.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="pati1993" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id3"&gt;[Pati1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="25"&gt;
+&lt;li&gt;&lt;ol class="first upperalpha" start="3"&gt;
+&lt;li&gt;Pati, R. Rezaiifar, and P. S. Krishnaprasad, “Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition,” in Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on, 1993, pp. 40–44.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="chen2001" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[Chen2001]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
+&lt;li&gt;&lt;ol class="first upperalpha" start="19"&gt;
+&lt;li&gt;Chen, D. L. Donoho, and M. A. Saunders, “Atomic decomposition by basis pursuit,” SIAM journal on scientific computing, vol. 20, no. 1, pp. 33–61, 1998.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="mairal2009" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;[Mairal2009]&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="10"&gt;
+&lt;li&gt;Mairal, F. Bach, J. Ponce, and G. Sapiro, “Online dictionary learning for sparse coding,” in Proceedings of the 26th Annual International Conference on Machine Learning, 2009, pp. 689–696.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;/div&gt;
 </summary><category term="ift6266"></category></entry><entry><title>Speech signal representations</title><link href="/initial_representation.html" rel="alternate"></link><updated>2014-02-01T18:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:,2014-02-01:initial_representation.html</id><summary type="html">&lt;p&gt;One of the objectives of our project is to learn a useful
 representation from speech signals that can be used to synthesize new
