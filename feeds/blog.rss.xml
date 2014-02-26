@@ -65,7 +65,7 @@ converges to a local minimum solution.&lt;/p&gt;
 &lt;p&gt;For sparse coding, we want to use multiple atoms to reconstruct the
 signal. In the snippet below, we generate a dictionary with 1024
 waveforms by using the dictionary learning functions available in
-&lt;a class="reference external" href="http://scikit-learn.org"&gt;scikit-learn&lt;/a&gt;, which is based on a paper by [Mairal et al]_. The
+&lt;a class="reference external" href="http://scikit-learn.org"&gt;scikit-learn&lt;/a&gt;, which is based on a paper by &lt;a class="citation-reference" href="#mairal2009" id="id5"&gt;[Mairal2009]&lt;/a&gt;. The
 training data consists of two minutes of audio from the TIMIT
 database; sentences were randomly chosen and then split into frames of
 256 samples each.&lt;/p&gt;
@@ -206,7 +206,7 @@ issue and it seems it will get fixed anytime soon.&lt;/p&gt;
 &lt;table class="docutils citation" frame="void" id="mairal2009" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;[Mairal2009]&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="10"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id5"&gt;[Mairal2009]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="10"&gt;
 &lt;li&gt;Mairal, F. Bach, J. Ponce, and G. Sapiro, “Online dictionary learning for sparse coding,” in Proceedings of the 26th Annual International Conference on Machine Learning, 2009, pp. 689–696.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/td&gt;&lt;/tr&gt;
