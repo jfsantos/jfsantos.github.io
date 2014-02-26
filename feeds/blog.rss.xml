@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 25 Feb 2014 17:00:00 -0500</lastBuildDate><item><title>Dictionary Learning and Sparse Coding for Speech Signals</title><link>/dictlearning.html</link><description>&lt;p&gt;Sparse signal approximations are the basis for a variety of signal
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 25 Feb 2014 17:00:00 -0500</lastBuildDate><item><title>Dictionary Learning and Sparse Coding for Speech Signals</title><link>/dictlearning.html</link><description>&lt;p&gt;Sparse signal approximations are the basis for a variety of signal
 processing techniques. Such approximations are usually employed with
 the objective of having a signal representation that is more
 meaningful, malleable, and robust to noise than the ones obtained by

@@ -1,5 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2014-02-01T18:00:00-05:00</updated><entry><title>Speech signal representations</title><link href="/initial_representation.html" rel="alternate"></link><updated>2014-02-01T18:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:,2014-02-01:initial_representation.html</id><summary type="html">&lt;p&gt;One of the objectives of our project is to learn a useful
+<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2014-02-25T17:00:00-05:00</updated><entry><title>Dictionary Learning and Sparse Coding for Speech Signals</title><link href="/dictlearning.html" rel="alternate"></link><updated>2014-02-25T17:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:,2014-02-25:dictlearning.html</id><summary type="html">&lt;p&gt;Sparse signal approximations are the basis for a variety of signal
+processing techniques. Such approximations are usually employed with
+the objective of having a signal representation that is more
+meaningful, malleable, and robust to noise than the ones obtained by
+standard transform methods [1]. The so-called dictionary based methods
+(DBM) decompose a signal into a linear combination of waveforms
+through an approximation technique such as Matching Pursuit (MP) [2],
+Orthogonal Matching Pursuit (OMP) [3], or basis pursuit [4]. The
+collection of waveforms that can be selected for the linear
+combination is called a dictionary. This dictionary is usually
+overcomplete, either because it is formed by merging complete
+dictionaries or because the waveforms are chosen arbitrarily (and we
+have more waveforms than the length of the signal we want to
+represent).&lt;/p&gt;
+&lt;div class="section" id="sparse-approximation-problem-formulations"&gt;
+&lt;h2&gt;Sparse approximation problem formulations&lt;/h2&gt;
+&lt;p&gt;The sparse coding problem is usually formulated either as a
+sparsity-constrained problem or as an error-constrained problem. The
+formulations are as follows:&lt;/p&gt;
+&lt;p&gt;Sparsity-constrained:
+&lt;span class="math"&gt;\(\underline{\hat{\gamma}} = \underset{\underline{\gamma}}{arg\,min}\|\underline{x} - D \underline{\gamma}\|_2^2 \quad\text{s.t.}\quad   \|\underline{\gamma}\|_0 \leq K\)&lt;/span&gt;
+&lt;/p&gt;
+&lt;p&gt;Error-constrained:
+&lt;span class="math"&gt;\(\underline{\hat{\gamma}} = \underset{\underline{\gamma}}{arg\,min}\|\underline{\gamma}\|_0 \quad\text{s.t.}\quad \|\underline{x} - D \underline{\gamma}\|_2^2 \leq \epsilon\)&lt;/span&gt;
+&lt;/p&gt;
+&lt;p&gt;In the first one, the idea is that we want to represent the signal by
+a linear combination of up to K known waveforms. In the second
+formulation, we want the squared error of the representation to be
+below a certain threshold. Both formulations are useful, depending on
+the problem you are trying to solve: the first one will lead to more
+compact representations, while with the second one you can avoid
+higher representation errors.&lt;/p&gt;
+&lt;p&gt;The second formulation is also useful for applications which need
+denoising: consider you have a corrupted version of your signal, and
+also that you know (more or less) the signal-to-noise ratio (SNR). If
+the noise is very different from the signal you are interested in and
+your dictionary is optimized to represent these signals only, it may
+be the case that noise is not well represented by the waveforms in
+your dictionary. So, you could use the second formulation, setting
+&lt;span class="math"&gt;\(\epsilon\)&lt;/span&gt;
+ as the estimated noise level, and expect that a good
+part of the noise component is not going to be represented in the
+sparse approximation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="dictionary-learning"&gt;
+&lt;h2&gt;Dictionary learning&lt;/h2&gt;
+&lt;p&gt;Reconstructing a speech signal based on a learned set of segments is not
+a new thing. It is done in a well-known technique called vector
+quantization (VQ). In VQ, the signal is reconstructed by using only a
+single atom (or &lt;em&gt;codeword&lt;/em&gt;, on the VQ literature jargon) per signal
+frame. The dictionary (or &lt;em&gt;codebook&lt;/em&gt;) is usually designed by a
+nearest-neighbor method, which aims to find the codebook that can
+reconstruct a signal by using the codewords that have the smaller
+distances to the original signal frames while minimizing the residual.
+K-means is a codebook learning algorithm for VQ that solves this problem
+by dividing the training samples into &lt;span class="math"&gt;\(K\)&lt;/span&gt;
+ clusters of the nearest
+neighbors of each of the &lt;span class="math"&gt;\(K\)&lt;/span&gt;
+ items in the initial codebook. The
+codebook is then updated by finding the centroid for each of the
+&lt;span class="math"&gt;\(K\)&lt;/span&gt;
+ clusters. These steps are ran iteratively until the algorithm
+converges to a local minimum solution.&lt;/p&gt;
+&lt;p&gt;For sparse coding, we want to use multiple atoms to reconstruct the
+signal. In the snippet below, we generate a dictionary with 1024
+waveforms by using the dictionary learning functions available in
+&lt;a class="reference external" href="http://scikit-learn.org"&gt;scikit-learn&lt;/a&gt;, which is based on a paper by &lt;a class="reference external" href="http://www.di.ens.fr/sierra/pdfs/icml09.pdf"&gt;Mairal et al&lt;/a&gt;. The training data
+consists of two minutes of audio from the TIMIT database; sentences
+were randomly chosen and then split into frames of 256 samples each.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c"&gt;# Build the dictionary&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.decomposition&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;MiniBatchDictionaryLearning&lt;/span&gt;
+&lt;span class="n"&gt;dico&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;MiniBatchDictionaryLearning&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_components&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;alpha&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n_iter&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;D&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dico&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;training_data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;components_&lt;/span&gt;
+&lt;/pre&gt;
+&lt;img alt="" class="align-center" src="images/dictlearning_5_1.png" style="width: 720px;" /&gt;
+&lt;p&gt;If we take a look into some of the learned waveforms in the figure
+above, we'll see that we have both low-frequency, quasiperiodic
+signals (which are probably matching vowels) and signals with more
+high-frequency components that look a bit noisy (probably representing
+stops/fricatives).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="reconstructing-speech-segments-using-sparse-coding-with-the-learned-dictionary"&gt;
+&lt;h2&gt;Reconstructing speech segments using sparse coding with the learned dictionary&lt;/h2&gt;
+&lt;p&gt;Now that we have a dictionary which (supposedly) is good for
+representing speech signals, let's use Orthogonal Matching Pursuit
+(OMP) to reconstruct a speech segment based on a linear combination of
+dictionary entries. Let's get 10 seconds of audio from TIMIT (from a
+segment of the set that was not in the training set) and reconstruct
+it using a sparse approximation. We use the sparsity-based constraint
+form, as we are more interested in representing speech in a sparse
+way:&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c"&gt;# Get sample speech segment to reconstruct&lt;/span&gt;
+&lt;span class="n"&gt;test_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;210&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c"&gt;# Reconstruct it frame-by-frame using a linear combination of 20&lt;/span&gt;
+&lt;span class="c"&gt;# atoms per frame (sparsity-constrained OMP)&lt;/span&gt;
+&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ndarray&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;test_data&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="mi"&gt;512&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.decomposition&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SparseCoder&lt;/span&gt;
+
+&lt;span class="n"&gt;coder&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SparseCoder&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dictionary&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;transform_n_nonzero_coefs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                    &lt;span class="n"&gt;transform_alpha&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;transform_algorithm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;omp&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;coder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test_data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]):&lt;/span&gt;
+    &lt;span class="n"&gt;out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;:(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Here are the results: you can listen above the original file and the reconstructed one.&lt;/p&gt;
+&lt;p&gt; Original: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/orig.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; Reconstructed with 20 atoms/frame:&lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/reconst.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt;&lt;/p&gt;&lt;p&gt;These figures show the original signal, the reconstructed one, and the squared error:&lt;/p&gt;
+&lt;img alt="" class="align-center" src="images/dictlearning_10_1.png" /&gt;
+&lt;p&gt;While the reconstruction error is low for most of the time considering
+we are using only 20 non-zero values per frame to represent the
+signal, as opposed to using 256 samples, we can clearly hear the
+reconstruction-related artifacts. However, that may be OK if all we
+want with the learned dictionary is to have a sparser representation
+for speech that will be used later in our synthesizer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="relationship-with-our-project-and-next-steps"&gt;
+&lt;h2&gt;Relationship with our project and next steps&lt;/h2&gt;
+&lt;p&gt;I started working on some experiments comparing the performance of a
+sample predictor to two other predictors: one based on LPC
+coefficients and the other on a sparse representation of speech. As we
+discussed in class, speech has some parameters that change quickly
+(source/excitation signal), while others change slowly
+(articulation-related). In the first experiments prof. Bengio
+suggested, we were working on an MLP-based generative model for
+samples without any consideration for phones. His second suggestion
+was to design a generative model for the next sample conditioned on
+the previous, current, and next phone.&lt;/p&gt;
+&lt;p&gt;I started developing generative models based on MLPs for the three
+representations above, using one-hot encoded phones and the relative
+position in time of the current phone as inputs. For the model based
+on LPCs, I am planning to have a separate generative model for the
+excitation signal, which is going to work pretty much like the
+next-sample predictor we worked on previously; this model could also
+be based on the previous, current, and next phone, previous samples,
+and things such as pitch/speaker gender. Unfortunately, due to a &lt;a class="reference external" href="https://groups.google.com/forum/#!topic/pylearn-users/EZ3H8xP7gN8"&gt;bug&lt;/a&gt;
+in pylearn2 I was not able to get them working yet. &lt;a class="reference external" href="http://vdumoulin.github.io/"&gt;Vincent&lt;/a&gt; said
+there's already a &lt;a class="reference external" href="https://github.com/lisa-lab/pylearn2/pull/512"&gt;pull request&lt;/a&gt; which solves this
+issue and it seems it will get fixed anytime soon.&lt;/p&gt;
+&lt;p&gt;Last note: you can view the IPython notebook containing all the code used to generate the dictionary and the plots &lt;a class="reference external" href="http://nbviewer.ipython.org/urls/seaandsailor.com/files/dictlearning.ipynb"&gt;here&lt;/a&gt;, or &lt;a class="reference external" href="files/dictlearning.ipynb"&gt;download&lt;/a&gt; and run it interactively in your computer.&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="ift6266"></category></entry><entry><title>Speech signal representations</title><link href="/initial_representation.html" rel="alternate"></link><updated>2014-02-01T18:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:,2014-02-01:initial_representation.html</id><summary type="html">&lt;p&gt;One of the objectives of our project is to learn a useful
 representation from speech signals that can be used to synthesize new
 (arbitrary) sentences. There are many different ways of representing
 speech signals; those representations are usually tailored to specific
