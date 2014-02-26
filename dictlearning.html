@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,700' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title> Dictionary Learning and Sparse Coding for Speech Signals | seaandsailor </title>
+
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/font-awesome.css" type="text/css"/>
+        
+    <script type= "text/javascript">
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
+        s[(window.opera ? "innerHTML" : "text")] =
+            "MathJax.Hub.Config({" + 
+            "    config: ['MMLorHTML.js']," + 
+            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
+            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
+            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+            "    tex2jax: { " +
+            "        processEscapes: true }, " +
+            "    'HTML-CSS': { " +
+            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
+            "    } " +
+            "}); ";
+        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
+    </script>
+
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+            <li><a href="/index.html">Blog</a> </li>
+            <li><a href="/archives.html">Archive</a> </li>
+            <li><a href="/tags.html">Tags</a> </li>
+            <li><a href="http://jfsantos.bitbucket.org">Resume</a> </li>
+            <li><a href="/pages/about.html">About</a> </li>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+    <h1 class="title"> Dictionary Learning and Sparse Coding for Speech Signals</h1>
+    <p class=date> 25 02 2014 </p>
+    <p>Sparse signal approximations are the basis for a variety of signal
+processing techniques. Such approximations are usually employed with
+the objective of having a signal representation that is more
+meaningful, malleable, and robust to noise than the ones obtained by
+standard transform methods [1]. The so-called dictionary based methods
+(DBM) decompose a signal into a linear combination of waveforms
+through an approximation technique such as Matching Pursuit (MP) [2],
+Orthogonal Matching Pursuit (OMP) [3], or basis pursuit [4]. The
+collection of waveforms that can be selected for the linear
+combination is called a dictionary. This dictionary is usually
+overcomplete, either because it is formed by merging complete
+dictionaries or because the waveforms are chosen arbitrarily (and we
+have more waveforms than the length of the signal we want to
+represent).</p>
+<div class="section" id="sparse-approximation-problem-formulations">
+<h2>Sparse approximation problem formulations</h2>
+<p>The sparse coding problem is usually formulated either as a
+sparsity-constrained problem or as an error-constrained problem. The
+formulations are as follows:</p>
+<p>Sparsity-constrained:
+<span class="math">\(\underline{\hat{\gamma}} = \underset{\underline{\gamma}}{arg\,min}\|\underline{x} - D \underline{\gamma}\|_2^2 \quad\text{s.t.}\quad   \|\underline{\gamma}\|_0 \leq K\)</span>
+</p>
+<p>Error-constrained:
+<span class="math">\(\underline{\hat{\gamma}} = \underset{\underline{\gamma}}{arg\,min}\|\underline{\gamma}\|_0 \quad\text{s.t.}\quad \|\underline{x} - D \underline{\gamma}\|_2^2 \leq \epsilon\)</span>
+</p>
+<p>In the first one, the idea is that we want to represent the signal by
+a linear combination of up to K known waveforms. In the second
+formulation, we want the squared error of the representation to be
+below a certain threshold. Both formulations are useful, depending on
+the problem you are trying to solve: the first one will lead to more
+compact representations, while with the second one you can avoid
+higher representation errors.</p>
+<p>The second formulation is also useful for applications which need
+denoising: consider you have a corrupted version of your signal, and
+also that you know (more or less) the signal-to-noise ratio (SNR). If
+the noise is very different from the signal you are interested in and
+your dictionary is optimized to represent these signals only, it may
+be the case that noise is not well represented by the waveforms in
+your dictionary. So, you could use the second formulation, setting
+<span class="math">\(\epsilon\)</span>
+ as the estimated noise level, and expect that a good
+part of the noise component is not going to be represented in the
+sparse approximation.</p>
+</div>
+<div class="section" id="dictionary-learning">
+<h2>Dictionary learning</h2>
+<p>Reconstructing a speech signal based on a learned set of segments is not
+a new thing. It is done in a well-known technique called vector
+quantization (VQ). In VQ, the signal is reconstructed by using only a
+single atom (or <em>codeword</em>, on the VQ literature jargon) per signal
+frame. The dictionary (or <em>codebook</em>) is usually designed by a
+nearest-neighbor method, which aims to find the codebook that can
+reconstruct a signal by using the codewords that have the smaller
+distances to the original signal frames while minimizing the residual.
+K-means is a codebook learning algorithm for VQ that solves this problem
+by dividing the training samples into <span class="math">\(K\)</span>
+ clusters of the nearest
+neighbors of each of the <span class="math">\(K\)</span>
+ items in the initial codebook. The
+codebook is then updated by finding the centroid for each of the
+<span class="math">\(K\)</span>
+ clusters. These steps are ran iteratively until the algorithm
+converges to a local minimum solution.</p>
+<p>For sparse coding, we want to use multiple atoms to reconstruct the
+signal. In the snippet below, we generate a dictionary with 1024
+waveforms by using the dictionary learning functions available in
+<a class="reference external" href="http://scikit-learn.org">scikit-learn</a>, which is based on a paper by <a class="reference external" href="http://www.di.ens.fr/sierra/pdfs/icml09.pdf">Mairal et al</a>. The training data
+consists of two minutes of audio from the TIMIT database; sentences
+were randomly chosen and then split into frames of 256 samples each.</p>
+<pre class="code python literal-block">
+<span class="c"># Build the dictionary</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">MiniBatchDictionaryLearning</span>
+<span class="n">dico</span> <span class="o">=</span> <span class="n">MiniBatchDictionaryLearning</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">dico</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="n">components_</span>
+</pre>
+<img alt="" class="align-center" src="images/dictlearning_5_1.png" style="width: 720px;" />
+<p>If we take a look into some of the learned waveforms in the figure
+above, we'll see that we have both low-frequency, quasiperiodic
+signals (which are probably matching vowels) and signals with more
+high-frequency components that look a bit noisy (probably representing
+stops/fricatives).</p>
+</div>
+<div class="section" id="reconstructing-speech-segments-using-sparse-coding-with-the-learned-dictionary">
+<h2>Reconstructing speech segments using sparse coding with the learned dictionary</h2>
+<p>Now that we have a dictionary which (supposedly) is good for
+representing speech signals, let's use Orthogonal Matching Pursuit
+(OMP) to reconstruct a speech segment based on a linear combination of
+dictionary entries. Let's get 10 seconds of audio from TIMIT (from a
+segment of the set that was not in the training set) and reconstruct
+it using a sparse approximation. We use the sparsity-based constraint
+form, as we are more interested in representing speech in a sparse
+way:</p>
+<pre class="code python literal-block">
+<span class="c"># Get sample speech segment to reconstruct</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">fs</span><span class="o">*</span><span class="mi">200</span><span class="p">:</span><span class="n">fs</span><span class="o">*</span><span class="mi">210</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">fs</span><span class="o">*</span><span class="mi">10</span><span class="o">/</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+
+<span class="c"># Reconstruct it frame-by-frame using a linear combination of 20</span>
+<span class="c"># atoms per frame (sparsity-constrained OMP)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">((</span><span class="n">test_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">512</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">SparseCoder</span>
+
+<span class="n">coder</span> <span class="o">=</span> <span class="n">SparseCoder</span><span class="p">(</span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">transform_n_nonzero_coefs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                    <span class="n">transform_alpha</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">transform_algorithm</span><span class="o">=</span><span class="s">&quot;omp&quot;</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">coder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="mi">256</span><span class="p">:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">256</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">result</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+<p>Here are the results: you can listen above the original file and the reconstructed one.</p>
+<p> Original: <br>
+<audio controls="controls" >
+      <source src="files/orig.ogg" type="audio/wav" />
+      Your browser does not support the audio element.
+</audio> </p>
+<p> Reconstructed with 20 atoms/frame:<br>
+<audio controls="controls" >
+      <source src="files/reconst.ogg" type="audio/wav" />
+      Your browser does not support the audio element.
+</audio></p><p>These figures show the original signal, the reconstructed one, and the squared error:</p>
+<img alt="" class="align-center" src="images/dictlearning_10_1.png" />
+<p>While the reconstruction error is low for most of the time considering
+we are using only 20 non-zero values per frame to represent the
+signal, as opposed to using 256 samples, we can clearly hear the
+reconstruction-related artifacts. However, that may be OK if all we
+want with the learned dictionary is to have a sparser representation
+for speech that will be used later in our synthesizer.</p>
+</div>
+<div class="section" id="relationship-with-our-project-and-next-steps">
+<h2>Relationship with our project and next steps</h2>
+<p>I started working on some experiments comparing the performance of a
+sample predictor to two other predictors: one based on LPC
+coefficients and the other on a sparse representation of speech. As we
+discussed in class, speech has some parameters that change quickly
+(source/excitation signal), while others change slowly
+(articulation-related). In the first experiments prof. Bengio
+suggested, we were working on an MLP-based generative model for
+samples without any consideration for phones. His second suggestion
+was to design a generative model for the next sample conditioned on
+the previous, current, and next phone.</p>
+<p>I started developing generative models based on MLPs for the three
+representations above, using one-hot encoded phones and the relative
+position in time of the current phone as inputs. For the model based
+on LPCs, I am planning to have a separate generative model for the
+excitation signal, which is going to work pretty much like the
+next-sample predictor we worked on previously; this model could also
+be based on the previous, current, and next phone, previous samples,
+and things such as pitch/speaker gender. Unfortunately, due to a <a class="reference external" href="https://groups.google.com/forum/#!topic/pylearn-users/EZ3H8xP7gN8">bug</a>
+in pylearn2 I was not able to get them working yet. <a class="reference external" href="http://vdumoulin.github.io/">Vincent</a> said
+there's already a <a class="reference external" href="https://github.com/lisa-lab/pylearn2/pull/512">pull request</a> which solves this
+issue and it seems it will get fixed anytime soon.</p>
+<p>Last note: you can view the IPython notebook containing all the code used to generate the dictionary and the plots <a class="reference external" href="http://nbviewer.ipython.org/urls/seaandsailor.com/files/dictlearning.ipynb">here</a>, or <a class="reference external" href="files/dictlearning.ipynb">download</a> and run it interactively in your computer.</p>
+</div>
+
+    
+<div class=twitter>
+<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+    <p class=tags>This entry was tagged as
+      <a href="/tag/ift6266.html">ift6266</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    <a href="https://github.com/fjavieralba/flasky">Theme</a>  by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'joao.eel';
+          s = 'gmail.com';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270"><li><i class="icon-linkedin-sign icon-large" ></i></li></a>
+        <a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="/feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+    <script type="text/javascript">
+        var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik-seaandsailor.rhcloud.com/" : "http://piwik-seaandsailor.rhcloud.com/");
+    document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+    </script><script type="text/javascript">
+    try {
+    var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+    piwikTracker.trackPageView();
+    piwikTracker.enableLinkTracking();
+    } catch( err ) {}
+    </script><noscript><p><img src="http://piwik-seaandsailor.rhcloud.com/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+  </body>
+</html>
