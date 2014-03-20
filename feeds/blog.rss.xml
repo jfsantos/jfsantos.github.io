@@ -1,5 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 25 Feb 2014 17:00:00 -0500</lastBuildDate><item><title>Dictionary Learning and Sparse Coding for Speech Signals</title><link>/dictlearning.html</link><description>&lt;p&gt;Sparse signal approximations are the basis for a variety of signal
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 19 Mar 2014 21:00:00 -0400</lastBuildDate><item><title>Experiments with a 2 layer MLP incorporating phone information</title><link>/exp_mlp.html</link><description>&lt;p&gt;During the spring break I decided to run some experiments with MLPs as
+generative models, using both acoustic samples and phone codes as input.
+The experiment's objective is two-fold: I wanted to investigate if using
+information from surrounding frames improves the models (when compared
+to what our colleagues have found), and I also wanted to have a baseline
+to compare to the models based on sparse coding that I have been working
+on. In the experiments by
+&lt;a class="reference external" href="http://ift6266hjb.wordpress.com/2014/02/10/speech-synthesis-project-description-and-first-attempt-at-a-regression-mlp/"&gt;Hubert&lt;/a&gt;,
+&lt;a class="reference external" href="http://jpraymond.wordpress.com/2014/02/27/results-with-a-one-hidden-layer-neural-net/"&gt;Jean-Phillipe&lt;/a&gt;,
+and &lt;a class="reference external" href="http://twuilliam.wordpress.com/2014/02/27/quick-experiment-breaking-the-sin-in-one-line/"&gt;William&lt;/a&gt;, only the acoustic samples information was used as
+input.
+&lt;a class="reference external" href="http://amjadmahayri.wordpress.com/2014/02/27/frame-prediction-given-phoneme-window/"&gt;Amjad&lt;/a&gt;
+has already done some tests incorporating phone information, but it
+seems he is using only the current phone.&lt;/p&gt;
+&lt;p&gt;In my experiments, I updated
+&lt;a class="reference external" href="http://vdumoulin.github.io/articles/timit-part-5"&gt;Vincent's&lt;/a&gt; dataset
+implementation in order to make it provide the phones corresponding to
+the current, previous, and next frame. The code can be found in my
+&lt;a class="reference external" href="https://github.com/jfsantos/research"&gt;fork&lt;/a&gt;. Previously I was using
+Python code to setup pylearn2 experiments, but I decided to switch to
+YAML for these experiments as I didn't need to do anything fancy. The
+YAML for this experiment can be found
+&lt;a class="reference external" href="https://github.com/jfsantos/ift6266h14/blob/master/experiments/mlp_acoustic/ac160_ph3_rl2_malespkr.yaml"&gt;here&lt;/a&gt; and the serialized model is &lt;a class="reference external" href="https://github.com/jfsantos/ift6266h14/blob/master/experiments/mlp_acoustic/ac160_ph3_rl2_malespkr.pkl"&gt;here&lt;/a&gt;.
+The dataset was configured as follows:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Frame length: 160 samples&lt;/li&gt;
+&lt;li&gt;Frame overlap: 0 (not ideal, but it can be seen as a subsampling of
+the complete dataset)&lt;/li&gt;
+&lt;li&gt;Frames per example: 1&lt;/li&gt;
+&lt;li&gt;Number of predicted samples: 1&lt;/li&gt;
+&lt;li&gt;Phone information: one-hot encoded phone code for the previous,
+current, and next frame&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;With this configuration, each example is a vector with
+&lt;span class="math"&gt;\(160 + 3*62 = 346\)&lt;/span&gt;
+ values. The MLP was set-up and trained as
+follows:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Two rectified linear hidden layers (the first with 500 and the second
+with 100 units)&lt;/li&gt;
+&lt;li&gt;Linear output layer with a single unit (a single sample is predicted
+for each input)&lt;/li&gt;
+&lt;li&gt;Training algorithm: SGD with fixed learning rate of 0.01, running for
+a maximum of 200 epochs (alternative convergence condition was set as
+10 iterations with improvement lower than &lt;span class="math"&gt;\(1^{-10}\)&lt;/span&gt;
+). The batch
+size was of 512 examples.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Total training time for this experiment was approximately 1.15 hours,
+running on a CPU (Intel Core i7-2600, 8 GB RAM, with Theano running over
+MKL and using 4 cores simultaneously). As mentioned before, I considered
+10 iterations without improvement as the convergence condition, which
+happened by the iteration 159. A plot for the training, testing, and
+validation set errors can be seen below. The errors found after
+convergence (for the normalized, i.e., centered and divided by the
+standard deviation) were the following:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Training error: 0.02284&lt;/li&gt;
+&lt;li&gt;Test error: 0.03309&lt;/li&gt;
+&lt;li&gt;Validation error: 0.05482&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A plot showing the evolution of the errors over epochs can be seen below.&lt;/p&gt;
+&lt;img alt="" src="images/exp_mlp_1.png" /&gt;
+&lt;p&gt;To evaluate the trained network as a synthesizer, I got a sequence of
+phone codes straight out of a sentence in the validation set and used it
+as input to the MLP. As I did not have a previous frame, the initial
+input is a frame with only zeros on it. I played with a multiplicative
+factor on the noise added to the Gaussian sampling as &lt;a class="reference external" href="http://davidtob.wordpress.com/2014/03/14/generating-one-phone-from-one-timit-speaker/"&gt;David
+did&lt;/a&gt;,
+as using directly the test error I ended up with bursts as can be seen
+below. The following multiplicative factors were tested:
+&lt;tt class="docutils literal"&gt;[0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]&lt;/tt&gt;. As using high noise levels ends
+up corrupting too much the signal, I filtered them down to approximately
+the telephone bandwidth (300-4000 Hz) with a &lt;span class="math"&gt;\(4^{th}\)&lt;/span&gt;
+ order
+Butterworth passband filter, just to reduce the overall effect of noisy
+sampling. For low noise multipliers, all I got was a short burst and
+then the output stays at zero. However, by increasing the noise level to
+five times the mean square test error, apparently I got some more
+structure: even though it has almost nothing to do with whatever should
+have been synthesized, it does sound like multiple speakers babbling. The respective audio files and plots (acoustic waveform + spectrogram) can be seen below:&lt;/p&gt;
+&lt;p&gt; 0.01: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_0.01.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 0.05: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_0.05.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 0.1: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_0.1.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 0.5: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_0.5.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 1.0: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_1.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 2.0: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_2.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 5.0: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_5.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+&lt;p&gt; 10.0: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/y_noise_10.ogg" type="audio/wav" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;&lt;img alt="" src="images/exp_mlp_2.png" /&gt;
+&lt;p&gt;One interesting thing: I did the same procedure to generate an output
+during training, sometime around the &lt;span class="math"&gt;\(130^{th}\)&lt;/span&gt;
+ iteration. The
+output generated at that stage sounded much nicer than what I got
+after the training finished, but unfortunately the pickled model was
+overwritten because of the way I set up my YAML file, which overwrites
+the old model every time an iteration improves the objective. The only
+thing I kept was the output:&lt;/p&gt;
+&lt;audio controls="controls" &gt;
+  &lt;source controls src="files/malespkr_rl2_not_converged.ogg"&gt; type="audio/ogg" /&gt;
+  Your browser does not support the audio element.
+&lt;/audio&gt;&lt;div class="section" id="next-steps"&gt;
+&lt;h2&gt;Next steps&lt;/h2&gt;
+&lt;p&gt;Moving forward, I will write in my next post about the (not so
+successful) tests I did using sparse coding coefficients instead of
+acoustic samples as inputs. I will also comment about some ideas to
+incorporate more advanced models in my experiments.&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jfsantos</dc:creator><pubDate>Wed, 19 Mar 2014 21:00:00 -0400</pubDate><guid>tag:,2014-03-19:exp_mlp.html</guid><category>ift6266</category></item><item><title>Dictionary Learning and Sparse Coding for Speech Signals</title><link>/dictlearning.html</link><description>&lt;p&gt;Sparse signal approximations are the basis for a variety of signal
 processing techniques. Such approximations are usually employed with
 the objective of having a signal representation that is more
 meaningful, malleable, and robust to noise than the ones obtained by
