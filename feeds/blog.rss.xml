@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 19 Mar 2014 22:00:00 -0400</lastBuildDate><item><title>Using an auditory-inspired representation for speech</title><link>/gammatone.html</link><description>&lt;p&gt;I &lt;a class="reference external" href="http://www.seaandsailor.com/dict_learning.html"&gt;previously&lt;/a&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 31 Mar 2014 14:00:00 -0400</lastBuildDate><item><title>Using an auditory-inspired representation for speech</title><link>/gammatone.html</link><description>&lt;p&gt;I &lt;a class="reference external" href="http://www.seaandsailor.com/dict_learning.html"&gt;previously&lt;/a&gt;
 described an approach to representing speech signals by decomposing
 them to an arbitrary dictionary (using a sparse coding algorithm such
 as Orthogonal Matching Pursuit). In that post, I showed that learning
@@ -257,7 +257,7 @@ spectral envelope model on my next post.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jfsantos</dc:creator><pubDate>Wed, 19 Mar 2014 22:00:00 -0400</pubDate><guid>tag:,2014-03-19:gammatone.html</guid><category>ift6266</category></item><item><title>Experiments with a 2 layer MLP incorporating phone information</title><link>/exp_mlp.html</link><description>&lt;p&gt;During the spring break I decided to run some experiments with MLPs as
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jfsantos</dc:creator><pubDate>Mon, 31 Mar 2014 14:00:00 -0400</pubDate><guid>tag:,2014-03-31:gammatone.html</guid><category>ift6266</category></item><item><title>Experiments with a 2 layer MLP incorporating phone information</title><link>/exp_mlp.html</link><description>&lt;p&gt;During the spring break I decided to run some experiments with MLPs as
 generative models, using both acoustic samples and phone codes as input.
 The experiment's objective is two-fold: I wanted to investigate if using
 information from surrounding frames improves the models (when compared
