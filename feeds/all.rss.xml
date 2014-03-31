@@ -1,5 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 19 Mar 2014 21:00:00 -0400</lastBuildDate><item><title>Experiments with a 2 layer MLP incorporating phone information</title><link>/exp_mlp.html</link><description>&lt;p&gt;During the spring break I decided to run some experiments with MLPs as
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 19 Mar 2014 22:00:00 -0400</lastBuildDate><item><title>Using an auditory-inspired representation for speech</title><link>/gammatone.html</link><description>&lt;p&gt;I &lt;a class="reference external" href="http://www.seaandsailor.com/dict_learning.html"&gt;previously&lt;/a&gt;
+described an approach to representing speech signals by decomposing
+them to an arbitrary dictionary (using a sparse coding algorithm such
+as Orthogonal Matching Pursuit). In that post, I showed that learning
+a representation from the data by using a dictionary learning method
+could be useful. However, there were some problems with that
+approach. First, the dictionary atoms were not localized in time: the
+atoms I learned from the data were waveforms spreading throughout the
+entire frame. This behavior has led to issues when reconstructing the
+signal, as nothing guarantees the last sample in the &lt;span class="math"&gt;\(k^{th}\)&lt;/span&gt;
+
+frame will be close to the first sample in the &lt;span class="math"&gt;\(k+1^{th}\)&lt;/span&gt;
+
+frame. The second issue was related to not using overlapped windows to
+split/resynthesize the signal. This is one of the main reasons that
+made the signals I generated previously so noisy.&lt;/p&gt;
+&lt;p&gt;In order to solve these problems, I added two updates to my previous
+code:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Dropping the dictionary I learned from the data and switched to a
+gammatone dictionary.&lt;/li&gt;
+&lt;li&gt;Generating the audio frames using Hamming windows with 50% overlap.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;In the next sections, I will give a brief description and motivation
+for each of these updates. I will also show why they didn't work as
+well as I expected and inspired another architecture.&lt;/p&gt;
+&lt;div class="section" id="gammatone-functions-and-gammatone-based-dictionary"&gt;
+&lt;h2&gt;Gammatone functions and gammatone-based dictionary&lt;/h2&gt;
+&lt;p&gt;Gammatone filters are a popular way of modeling the auditory
+processing at the cochlea. Basically, the cochlea is interpreted as a
+filterbank whose impulse response follows the following equation (the
+product of a &lt;em&gt;gamma&lt;/em&gt; function and a cosine, or a &lt;em&gt;pure tone&lt;/em&gt;):&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+g(t) = at^{n-1}e^{-2\pi b t}\cos(2 \pi ft + \phi)
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;In this equation, &lt;span class="math"&gt;\(b\)&lt;/span&gt;
+ corresponds to the filter's bandwidth,
+&lt;span class="math"&gt;\(n\)&lt;/span&gt;
+ is the filter order, &lt;span class="math"&gt;\(f\)&lt;/span&gt;
+ is the central frequency, and
+&lt;span class="math"&gt;\(\phi\)&lt;/span&gt;
+ is the phase of the carrier. The first two parameters can
+be fixed for the entire filterbank, while the center frequencies
+&lt;span class="math"&gt;\(f\)&lt;/span&gt;
+ are usually defined according to the cochlea's critical
+frequencies. One way of computing these frequencies is by using the
+Equivalent Rectangular Bandwidth (ERB), which gives an approximation
+to the bandwidths of the human auditory filters:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+ERB_j = \frac{f_j}{Q_{ear}} + B_{min}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;Here, &lt;span class="math"&gt;\(Q_{ear} = 9.26449\)&lt;/span&gt;
+ and &lt;span class="math"&gt;\(B_{min} = 24.7\)&lt;/span&gt;
+ are
+constants corresponding to the Q factor and minimum bandwidth of human
+auditory filters.&lt;/p&gt;
+&lt;p&gt;Gammatone functions are used in auditory modelling because they match
+the resonance of different regions in the cochlea. As shown in
+&lt;a class="citation-reference" href="#smith2006" id="id1"&gt;[Smith2006]&lt;/a&gt;, human speech can be sparsely represented by gammatone
+atoms. &lt;a class="citation-reference" href="#strahl2008" id="id2"&gt;[Strahl2008]&lt;/a&gt; has later shown that a sparse gammatone model can
+be optimized for English speech, even though the optimized model does
+not match the human auditory filters anymore.&lt;/p&gt;
+&lt;p&gt;A gammatone dictionary can be built similarly to a Gabor dictionary,
+as gammatones are localized both in time and frequency. First, we have
+to choose a set of frequencies; usually, you pick the number of
+frequencies you want and the range, and use the ERB equation to find
+equally-spaced frequencies in the ERB space (these would be the so
+called critical frequencies). Then, we select the resolution of our
+atoms (which has to be less or equal to the frame length in our
+application) and then time-shift the atoms inside the frame by a
+specified amount. The following Python code does that (and also
+normalizes the dictionary at the end):&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;gammatone_matrix&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;resolution&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;step&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Dictionary of gammatone functions&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+     &lt;span class="n"&gt;centers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;resolution&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;step&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;step&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+     &lt;span class="n"&gt;D&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;centers&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;resolution&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;center&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;centers&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+         &lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;gammatone_function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;resolution&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;center&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+     &lt;span class="n"&gt;D&lt;/span&gt; &lt;span class="o"&gt;/=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;D&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))[:,&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;newaxis&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;D&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;For illustration, see below 5 time-shifted versions of the same
+gammatone (note that in the actual dictionary, we probably want the
+time-shifted atoms to overlap a bit more than in this figure).&lt;/p&gt;
+&lt;img alt="" class="align-center" src="images/gammatones.png" style="width: 500px;" /&gt;
+&lt;p&gt;See my gammatone sparse coding library &lt;a class="reference external" href="https://github.com/jfsantos/ift6266h14/blob/master/sparse_coding/sparse_coding_gammatone.py"&gt;here&lt;/a&gt;, and an updated version
+of my IPython notebook for sparse coding &lt;a class="reference external" href="https://github.com/jfsantos/ift6266h14/blob/master/sparse_coding/Sparse%20coding%20with%20a%20multiscale%20Gammatone%20dictionary.ipynb"&gt;there&lt;/a&gt; for more details. The
+test code in the library reads a wave file, segments it in 2048 frames
+with 50% overlap, windows each frame with a Hanning window (see next
+section for details) and decomposes each frame using gammatone
+atoms. The reconstruction in this example uses 200 non-zero
+coefficients per frame and the dictionary has 3150 atoms. This amounts
+for a compression of more than 10 times, but the reconstruction does
+not sound as bad as the ones we've seen previously.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="overlapping-windows"&gt;
+&lt;h2&gt;Overlapping windows&lt;/h2&gt;
+&lt;p&gt;A window function is a function that has non-zero values only inside a
+given interval. The most classical example of it is the rectangular
+window:&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+w_{rect}[n] = \begin{cases} 1, \mbox{if } n_0 \leq n \leq n_f \\
+0, \mbox{ otherwise} \end{cases}
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;However, a problem with the rectangular window is that it does nothing
+to smooth the signal at the window borders. If we are processing a
+signal on a per-frame basis and then reconstructing it by
+concatenating the processed frames, nothing guarantees continuity when
+we join the processed frames. These abrupt changes introduce broadband
+noise bursts in our signal, which is something that we probably do not
+want!&lt;/p&gt;
+&lt;p&gt;A way to mitigate this problem is to do &lt;a class="reference external" href="https://ccrma.stanford.edu/~jos/parshl/Overlap_Add_Synthesis.html"&gt;overlap-add&lt;/a&gt;
+synthesis. Instead of shifting a full frame at a time and using
+rectangular windows, we overlap frames by a certain amount (25%, 50%,
+and 75% are often used values) and multiply each frame by a smooth
+window. We use window functions in such a way that the overlapped
+windows always sum to unity. The figure below shows two &lt;a class="reference external" href="https://ccrma.stanford.edu/~jos/sasp/Hamming_Window.html"&gt;Hamming
+windows&lt;/a&gt; with an overlap of 50% (blue and green curves), and the sum
+of both windows (red curve). If we keep overlapping windows like this,
+overlap-add is an identity operation (i.e., we do not change the final
+result as long as we do not process the frames). Of course, in our
+case we are processing the frames, but overlap-add will help a bit in
+mitigating the abrupt changes between frames as we are now summing the
+values in overlapping frames to reconstruct our output instead of just
+connecting two non-overlapping frames.&lt;/p&gt;
+&lt;img alt="" class="align-center" src="images/hamming_windows.png" style="width: 600px;" /&gt;
+&lt;/div&gt;
+&lt;div class="section" id="experiment-with-sparse-coding-using-gammatone-atoms"&gt;
+&lt;h2&gt;Experiment with sparse coding using gammatone atoms&lt;/h2&gt;
+&lt;p&gt;Based on the ideas described above, I generated a sparse-coded version
+of the TIMIT dataset using my gammatone sparse coding library. I used
+gammatones with 50 different cosine frequencies between 50 and 8000
+Hz, timeshifts of 8 samples, and frames of length 160 with 50%
+overlap. For each frame, a sparse representation using 16 non-zero
+coefficients was extracted by using Orthogonal Matching Pursuit with a
+sparsity constraint.&lt;/p&gt;
+&lt;p&gt;This data and the one-hot encoded information about the previous,
+current, and next phone were used to train an MLP with the following
+characteristics:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Two rectified linear hidden layers (2150 and 950 units, respectively);&lt;/li&gt;
+&lt;li&gt;Linear output layer with 950 units (one for each sparse coding coefficient);&lt;/li&gt;
+&lt;li&gt;Training: batch gradient descent (batch size of 512 samples), with squared error objective;&lt;/li&gt;
+&lt;li&gt;Termination criteria: 10 epochs with objective decrease lower than
+&lt;span class="math"&gt;\(10^{-6}\)&lt;/span&gt;
+ or 200 epochs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;However, something strange happened when I tried to train this
+network: it has converged after 10 epochs! Of course this would be too
+good to be true, which means something terrible happened instead. In
+my case, the training, testing, and validation objectives did not
+change at all with training iterations. I still do not know exactly
+what happened, but I suspect the large amount of zeros in the input
+and target values made the majority of the gradients equal to zero,
+and without gradients none of the weights will change. Maybe a
+different kind of initialization could solve this issue, but there are
+other problems as well. Namely, this network does nothing to enforce
+sparsity at the output, and in the end the output coefficients will
+have a distribution that is very different from the target
+coefficients (which are zero most of the time). Prof. Bengio suggested
+that I could try making the output distribution the product of a
+Bernoulli distribution and a Gaussian distribution: the first one
+would say if that coefficient should be zero or not, and the latter
+would give its value. However, he noted that this is just an arbitrary
+statistical model which probably does not correspond to the real
+behavior of the coefficients, and we would probably be better by
+trying to estimate this distribution too (maybe with an RBM).&lt;/p&gt;
+&lt;p&gt;While trying to solve these issues, I had an idea for another
+architecture that could be easier to implement...&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="splitting-signal-into-spectral-envelope-and-phase"&gt;
+&lt;h2&gt;Splitting signal into spectral envelope and phase&lt;/h2&gt;
+&lt;p&gt;As &lt;a class="reference external" href="http://ift6266speechsynthesisjt.wordpress.com/2014/03/19/randomized-phases-preserves-speech-content-and-identity/"&gt;Jessica&lt;/a&gt; pointed out in her blog, most of the relevant
+information in a speech signal is encoded in its envelope. Because of
+that, we are less sensitive to phase distortions than to envelope
+distortions. As we have already discussed in class, as speech envelope
+variations are slower than the phase variations, some speech coding
+models (such as LPC) take these facts into account by encoding the
+envelope and the phase separately (and usually using a simpler model
+for the phase than for envelopes).&lt;/p&gt;
+&lt;p&gt;It was also brought to my attention that a recent paper &lt;a class="citation-reference" href="#han2014" id="id3"&gt;[Han2014]&lt;/a&gt; to
+be presented at this year's ICASSP uses gammatone filterbank features
+to find spectral masks to use in speech dereverberation. The advantage
+of using gammatone filterbanks instead of a simple STFT is that with
+the gammatone filterbank, we are able to fine-tune spectral resolution
+at lower frequency bands (the most important band for speech
+content). While speech dereverberation is a totally different topic,
+the feature space used in that paper is still relevant. They are
+looking for spectral masks to filter an existing signal and not on
+synthesis, so they can discard the phase completely. For our project,
+we cannot do that but we could work with a slightly different
+approach.&lt;/p&gt;
+&lt;p&gt;We have one network that is trained on spectral envelopes, using a
+similar approach to that of the paper. This network is trained using
+the gammatonegram, which consists of the total gammatone band energy
+in all channels of our filterbank per frame. The figure below depicts
+how this is done:&lt;/p&gt;
+&lt;img alt="" class="align-center" src="images/filterbank.png" style="width: 700px;" /&gt;
+&lt;p&gt;Here, &lt;span class="math"&gt;\(y_i[n], i = 1, \dots, 64\)&lt;/span&gt;
+ are the frame energies (sum of
+squared samples) for each gammatone channel (I'm using 64 channels
+here as this is what was used in &lt;a class="citation-reference" href="#han2014" id="id4"&gt;[Han2014]&lt;/a&gt; and can be a good starting
+point). As inputs of this network, we would use the gammatonegram of a
+number of previous frames, one-hot encoded phones for these frames
+(and possibly some of the next frames), and the output would be the
+gammatonegram of the next frame. This is not enough to resynthesize a
+speech signal as we don't have the phase, but that could be solved by
+training a separate model for phases, either for an overall phase or a
+per-channel phase. Resynthesis is done according to the following
+signal flow diagram:&lt;/p&gt;
+&lt;img alt="" class="align-center" src="images/synthesis.png" style="width: 500px;" /&gt;
+&lt;p&gt;Here, &lt;span class="math"&gt;\(p_i[n], i=1, \dots, 64\)&lt;/span&gt;
+ are vectors representing the
+phase of each channel and &lt;span class="math"&gt;\(g_i[n], i=1, \dots, 64\)&lt;/span&gt;
+ are the
+amplitudes for each gammatone channel (which could be either the
+&lt;span class="math"&gt;\(y_i[n]\)&lt;/span&gt;
+ values computed before for each frame or a smoothed
+version of them).&lt;/p&gt;
+&lt;p&gt;For the network architecture, I am planning on using an MLP (possibly
+with unsupervised pretraining) for the spectral envelopes. For the
+phase components, I will initially try RBMs using previous phase
+samples, phone codes, and speaker characteristics (pitch, gender,
+etc.) as input. I expect to be able to use simpler models for the
+phase (or at least be able to control this model's complexity, as I
+believe there should be a tradeoff between speech quality and the
+accuracy of the phase models). I have already extracted the gammatone
+features from the whole database and will report results for the
+spectral envelope model on my next post.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="references"&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;table class="docutils citation" frame="void" id="smith2006" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[Smith2006]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;E. C. Smith and M. S. Lewicki, “Efficient auditory coding,” Nature, vol. 439, no. 7079, pp. 978–982, 2006.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="strahl2008" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id2"&gt;[Strahl2008]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;S. Strahl and A. Mertins, “Sparse gammatone signal model optimized for English speech does not match the human auditory filters,” Brain research, vol. 1220, pp. 224–233, 2008.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="han2014" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;[Han2014]&lt;/td&gt;&lt;td&gt;&lt;em&gt;(&lt;a class="fn-backref" href="#id3"&gt;1&lt;/a&gt;, &lt;a class="fn-backref" href="#id4"&gt;2&lt;/a&gt;)&lt;/em&gt; K. Han, Y. Wang, D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at &lt;a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf"&gt;http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf&lt;/a&gt;.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jfsantos</dc:creator><pubDate>Wed, 19 Mar 2014 22:00:00 -0400</pubDate><guid>tag:,2014-03-19:gammatone.html</guid><category>ift6266</category></item><item><title>Experiments with a 2 layer MLP incorporating phone information</title><link>/exp_mlp.html</link><description>&lt;p&gt;During the spring break I decided to run some experiments with MLPs as
 generative models, using both acoustic samples and phone codes as input.
 The experiment's objective is two-fold: I wanted to investigate if using
 information from surrounding frames improves the models (when compared
@@ -297,58 +555,31 @@ issue and it seems it will get fixed anytime soon.&lt;/p&gt;
 &lt;table class="docutils citation" frame="void" id="sturm2009" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[Sturm2009]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="2"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="12"&gt;
-&lt;li&gt;Sturm, C. Roads, A. McLeran, and J. J. Shynk, “Analysis, Visualization, and Transformation of Audio Signals Using Dictionary-based Methods†,” Journal of New Music Research, vol. 38, no. 4, pp. 325–341, 2009.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[Sturm2009]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;B. L. Sturm, C. Roads, A. McLeran, and J. J. Shynk, “Analysis, Visualization, and Transformation of Audio Signals Using Dictionary-based Methods†,” Journal of New Music Research, vol. 38, no. 4, pp. 325–341, 2009.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="mallat1993" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id2"&gt;[Mallat1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="7"&gt;
-&lt;li&gt;Mallat and Z. Zhang, “Matching pursuits with time-frequency dictionaries,” IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397–3415, Dec. 1993.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id2"&gt;[Mallat1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;S. G. Mallat and Z. Zhang, “Matching pursuits with time-frequency dictionaries,” IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397–3415, Dec. 1993.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="pati1993" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id3"&gt;[Pati1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="25"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="3"&gt;
-&lt;li&gt;Pati, R. Rezaiifar, and P. S. Krishnaprasad, “Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition,” in Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on, 1993, pp. 40–44.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id3"&gt;[Pati1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Y. C. Pati, R. Rezaiifar, and P. S. Krishnaprasad, “Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition,” in Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on, 1993, pp. 40–44.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="chen2001" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[Chen2001]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="19"&gt;
-&lt;li&gt;Chen, D. L. Donoho, and M. A. Saunders, “Atomic decomposition by basis pursuit,” SIAM journal on scientific computing, vol. 20, no. 1, pp. 33–61, 1998.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[Chen2001]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;S. S. Chen, D. L. Donoho, and M. A. Saunders, “Atomic decomposition by basis pursuit,” SIAM journal on scientific computing, vol. 20, no. 1, pp. 33–61, 1998.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="mairal2009" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id5"&gt;[Mairal2009]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="10"&gt;
-&lt;li&gt;Mairal, F. Bach, J. Ponce, and G. Sapiro, “Online dictionary learning for sparse coding,” in Proceedings of the 26th Annual International Conference on Machine Learning, 2009, pp. 689–696.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id5"&gt;[Mairal2009]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;J. Mairal, F. Bach, J. Ponce, and G. Sapiro, “Online dictionary learning for sparse coding,” in Proceedings of the 26th Annual International Conference on Machine Learning, 2009, pp. 689–696.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
@@ -517,22 +748,13 @@ repo&lt;/a&gt;. You will need to install the packages &lt;a class="reference ext
 &lt;table class="docutils citation" frame="void" id="stevens2005" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[Stevens2005]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="19"&gt;
-&lt;li&gt;Stevens, J. Volkmann, and E. B. Newman, “A Scale for the Measurement of the Psychological Magnitude Pitch,” The Journal of the Acoustical Society of America, vol. 8, no. 3, pp. 185–190, Jun. 2005.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[Stevens2005]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;S. S. Stevens, J. Volkmann, and E. B. Newman, “A Scale for the Measurement of the Psychological Magnitude Pitch,” The Journal of the Acoustical Society of America, vol. 8, no. 3, pp. 185–190, Jun. 2005.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="o1988linear" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id2"&gt;[o1988linear]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="4"&gt;
-&lt;li&gt;O’Shaughnessy, “Linear predictive coding,” IEEE Potentials, vol. 7, no. 1, pp. 29–32, Feb. 1988.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id2"&gt;[o1988linear]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;D. O’Shaughnessy, “Linear predictive coding,” IEEE Potentials, vol. 7, no. 1, pp. 29–32, Feb. 1988.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="valin2006speex" rules="none"&gt;
@@ -544,49 +766,25 @@ repo&lt;/a&gt;. You will need to install the packages &lt;a class="reference ext
 &lt;table class="docutils citation" frame="void" id="mallat1989theory" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[mallat1989theory]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="7"&gt;
-&lt;li&gt;Mallat, “A theory for multiresolution signal decomposition: the wavelet representation,” Pattern Analysis and Machine Intelligence, IEEE Transactions on, vol. 11, no. 7, pp. 674–693, 1989.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id4"&gt;[mallat1989theory]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;S. G. Mallat, “A theory for multiresolution signal decomposition: the wavelet representation,” Pattern Analysis and Machine Intelligence, IEEE Transactions on, vol. 11, no. 7, pp. 674–693, 1989.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="sturm" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id5"&gt;[Sturm]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="2"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="12"&gt;
-&lt;li&gt;Sturm, C. Roads, A. McLeran, and J. J. Shynk, “Analysis, Visualization, and Transformation of Audio Signals Using Dictionary-based Methods†,” Journal of New Music Research, vol. 38, no. 4, pp. 325–341, 2009.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id5"&gt;[Sturm]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;B. L. Sturm, C. Roads, A. McLeran, and J. J. Shynk, “Analysis, Visualization, and Transformation of Audio Signals Using Dictionary-based Methods†,” Journal of New Music Research, vol. 38, no. 4, pp. 325–341, 2009.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="mallat1993" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id6"&gt;[Mallat1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="19"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="7"&gt;
-&lt;li&gt;Mallat and Z. Zhang, “Matching pursuits with time-frequency dictionaries,” IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397–3415, Dec. 1993.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id6"&gt;[Mallat1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;S. G. Mallat and Z. Zhang, “Matching pursuits with time-frequency dictionaries,” IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397–3415, Dec. 1993.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;table class="docutils citation" frame="void" id="pati1993" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id7"&gt;[Pati1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;ol class="first last upperalpha simple" start="25"&gt;
-&lt;li&gt;&lt;ol class="first upperalpha" start="3"&gt;
-&lt;li&gt;Pati, R. Rezaiifar, and P. S. Krishnaprasad, “Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition,” in Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on, 1993, pp. 40–44.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id7"&gt;[Pati1993]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Y. C. Pati, R. Rezaiifar, and P. S. Krishnaprasad, “Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition,” in Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on, 1993, pp. 40–44.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
