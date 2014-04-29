@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,700' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title> Using stochastic neurons for conditional computation | seaandsailor </title>
+
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/font-awesome.css" type="text/css"/>
+        
+    <script type= "text/javascript">
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
+        s[(window.opera ? "innerHTML" : "text")] =
+            "MathJax.Hub.Config({" + 
+            "    config: ['MMLorHTML.js']," + 
+            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
+            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
+            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+            "    tex2jax: { " +
+            "        processEscapes: true }, " +
+            "    'HTML-CSS': { " +
+            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
+            "    } " +
+            "}); ";
+        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
+    </script>
+
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+            <li><a href="/index.html">Blog</a> </li>
+            <li><a href="/archives.html">Archive</a> </li>
+            <li><a href="/tags.html">Tags</a> </li>
+            <li><a href="http://jfsantos.bitbucket.org">Resume</a> </li>
+            <li><a href="/pages/about.html">About</a> </li>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+    <h1 class="title"> Using stochastic neurons for conditional computation</h1>
+    <p class=date> 27 04 2014 </p>
+    <p>As stated in my previous <a class="reference external" href="/gammatone.html">post</a>, I had some issues when trying to train
+my network while using sparse-coded speech frames as input/output. The
+network was getting stuck at the same point after processing a single
+batch, and processing additional batches did anything training-wise
+(performance, weights, etc., were all stuck). I tried different
+initialization ranges for the weight matrices, a different learning
+rate, different network architectures (unit types, different number of
+units and layers) but the results were still the same.</p>
+<p>In the same post, I talked about sparsity not being enforced at the
+output. Since the whole dataset was sparse-coded and we were trying to
+predict the vector of sparse coefficients for the next frame, all
+outputs were expected to be as sparse as the inputs. This post
+describes what I did to try to mitigate this issue. I used stochastic
+neurons that enforce sparsity in the output layer of a network with
+the same architecture as the previous network. This brings in the
+problem of propagating gradients through stochastic units, but
+fortunately David Warde-Farley pointed me to a paper which presents
+some alternative solutions <a class="citation-reference" href="#bengio2013" id="id1">[Bengio2013]</a>.</p>
+<p>The units I used at the output layer are similar to the ones called
+&quot;Stochastic times Smooth&quot; (STS) in <a class="citation-reference" href="#bengio2013" id="id2">[Bengio2013]</a>. The idea is that the
+output of a neuron is equal to the product of a stochastic part
+(sampled from a binomial distribution with probability
+<span class="math">\(\sqrt{p_i}\)</span>
+) and a smooth part (for example, a sigmoid or a
+linear function). The value of <span class="math">\(p_i\)</span>
+ itself comes from a
+non-linear computation based on the unit's input. The stochastic
+part serves as a &quot;gater&quot; which prevents the activation with a
+probability determined by the activation at the &quot;gater path&quot; of the
+unit. A sparsity constraint is imposed by a combination of the
+KL-divergence criterion for the sigmoids in the &quot;gater path&quot; of the
+unit with added noise (as explained in sections 1 and 2 of Appendix A
+in the referred paper).</p>
+<!-- add image showing how the STS unit is structured -->
+<p>I found an implementation for these units by one of the authors
+(Nicholas Léonard) at <a class="reference external" href="https://github.com/nicholas-leonard/delicious">GitHub</a>, and updated it to the current Pylearn2
+interface. His implementation had support for &quot;hybrid&quot; STS units which
+are semi-stochastic (i.e., part of the output is deterministic), but I
+did not use it. These units have a 2-layer non-linear gater path (I
+used two sigmoidal layers) and a linear path for the output.</p>
+<p>Now, for the results: sadly, switching to these units made no
+significant difference at first. I did some tests using the same
+training/testing/validation sets from Vincent's TIMIT dataset but
+filtering it such that there were only sentences from male
+speakers. The network was still stuck at the same objective value
+after the first epoch. So, I decided to take a look on an alternative
+hypothesis: maybe less sparsity/a different sparse coding
+configuration could help?</p>
+<div class="section" id="using-an-undercomplete-gammatone-dictionary">
+<h2>Using an undercomplete gammatone dictionary</h2>
+<p>After I have seen that tinkering with the hyperparameters and
+switching the output layer to an STS layer did not solve my problem, I
+decided to play a bit with the inputs/outputs I was using. My sparse
+coding scheme was resulting in a very sparse representation, as each
+frame with 160 samples was being represented by up to 16 sparse coding
+coefficients. Since the dictionary had 950 different atoms, it means
+that only approximately 1.7% of the coefficients were non-zero, both
+in the input and in the output. Note that while the quality of the
+reconstruction is acceptable (as you can listen in the samples below),
+this gives us no idea on whether it is a good representation
+phone-wise (i.e., if there's any relationship between the chosen atoms
+and specific phones). Given the poor results I had with the previous
+representation, I guess the representation I chose could be one of the
+culprits for the bad performance.</p>
+<p>To test the effect of a different sparse representation, I decided to
+switch the dictionary used by my sparse coding scheme to an
+undercomplete dictionary (i.e., a dictionary where the number of atoms
+is smaller than the length of each atom), using longer frames and
+increasing the overlap to 87.5% instead of 50%. Another thing that
+motivated this change was realizing my previous dictionary still had a
+big problem: a dictionary with atoms with length 160 was not able to
+hold full atoms for frequencies lower than 1000 Hz, as the envelope
+for lower frequency atoms decay is slower than for high-frequency
+ones. To be able to have atoms for the desired frequency range (150 to
+8000 Hz), I would need to increase the atom length. However, the
+tradeoff between atom length and number of atoms in an overcomplete
+dictionary would make the sparse coefficient vector even longer than
+the one I had (950 coefficients). I made some experiments with an
+undercomplete dictionary with longer frames (1600 samples, equivalent
+to 100 ms at 16 kHz sampling rate) and more frequency values for the
+gammatones (64, instead of 50), and felt that the reconstruction
+quality decreased a bit. However, increasing the overlap between
+samples led to a decent reconstruction quality. You can listen to the
+original sample and the three reconstructed samples below:</p>
+<p> Original: <br>
+<audio controls="controls" >
+      <source src="files/original.ogg" type="audio/ogg" />
+      Your browser does not support the audio element.
+</audio> </p>
+
+<p> Reconstructed with "wrong" overcomplete dictionary (length 160, overlap 50%, atoms not correctly limited at frame borders): <br>
+<audio controls="controls" >
+      <source src="files/reconst_160_80.ogg" type="audio/ogg" />
+      Your browser does not support the audio element.
+</audio> </p>
+
+<p> Reconstructed with undercomplete dictionary (length 1600, overlap 50%): <br>
+<audio controls="controls" >
+      <source src="files/reconst_1600_800.ogg" type="audio/ogg" />
+      Your browser does not support the audio element.
+</audio> </p>
+
+<p> Reconstructed with undercomplete dictionary (length 1600, overlap 87.5%): <br>
+<audio controls="controls" >
+      <source src="files/reconst_1600_1400.ogg" type="audio/ogg" />
+      Your browser does not support the audio element.
+</audio> </p><p>The final dictionary I used had an atom length of 1600 and 1536 atoms.</p>
+</div>
+<div class="section" id="trouble-with-a-capital-t-as-in-import-theano-tensor-as-t">
+<h2>Trouble with a capital T (as in <tt class="docutils literal">import theano.tensor as T</tt>)</h2>
+<p>Unfortunately, even after switching the previous dataset by the one
+generated with the undercomplete dictionary, the behavior of my
+network during training was still the same... with the added problem
+of NaNs appearing eventually after being stuck for around 30
+iterations (with <a class="reference external" href="https://github.com/jfsantos/ift6266h14/blob/master/experiments/mlp_sparse/sp1600_conditional.yaml">this</a> YAML file, which uses only a bunch of sentences
+from the validation set to save processing time). I am not sure on
+what is causing this and searching at the <a class="reference external" href="https://groups.google.com/forum/#!topic/pylearn-users/yr-i_RzY9a0">pylearn-users</a> mailing
+list, I have seen that David Krueger also had a <a class="reference external" href="http://dskspeechsynthesis.wordpress.com/2014/04/25/no-more-nans/">similar issue</a>
+recently. In my case, using the <tt class="docutils literal">nan_guard</tt> as suggested by Ian in
+this thread showed that the error happened during the computation of a
+weight matrix inside the STS layer, namely the second weight matrix
+used in the gater path of the unit (second layer of the non-linear
+part). The error log is very low level as you can see <a class="reference external" href="files/0.err">here</a>, which
+makes sense since it comes from inside an optimized Theano
+graph. Altering the sparsity target in the output layer seems to avoid
+this, but the results are still the same. Additionally, the predicted
+coefficients are very far from the sparsity target I have set for the
+output layer: 10% of the coefficients should be non-zero, but I am
+getting something close to 50% instead (approximately 750 non-zero
+coefficients per frame).</p>
+<p>Here is an example of an audio file generated with the trained
+network, using the previous frame and the previous, current, and next
+phone as input:</p>
+<p> <audio controls="controls" >
+      <source src="files/test_sparse.ogg" type="audio/ogg" />
+      Your browser does not support the audio element.
+</audio> </p><p>(Yes, it does not sound like speech at all.)</p>
+</div>
+<div class="section" id="ideas-for-the-future">
+<h2>Ideas for the future?</h2>
+<p>None of my experiments led to results that would convince one that
+using a sparse representation based on gammatones would be a useful
+thing for speech synthesis. Architectures using time-domain audio
+samples as the input/output had much more exciting results. Looking
+forward, I would like to experiment with my other representation based
+on the gammatonegram and convolutional neural nets. As the
+gammatonegram for consecutive frames can be seen as an image (where
+each time-frequency cell is a &quot;pixel&quot;), the usual 2D CNNs could be
+tested.</p>
+<p>Even though our course is over, my PhD research topic is speech
+processing, so I believe I'll continue playing with deep learning in
+the future. I am interested in investigating applications of deep
+learning to speech enhancement systems. There is a very recent paper
+(to appear in this year's ICASSP) where the authors used a DNN to
+learn spectral masks to reduce reverberation in speech signals
+<a class="citation-reference" href="#han2014" id="id3">[Han2014]</a>. It would be interesting to see if a similar idea could be
+used not only for reverberation, but for speech enhancement under
+different kinds of environment. Other ideas will hopefully pop-up
+along the way!</p>
+<table class="docutils citation" frame="void" id="bengio2013" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Bengio2013]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Y. Bengio, N. Léonard, and A. Courville, “Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation,” arXiv:1308.3432 [cs], Aug. 2013.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="han2014" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[Han2014]</a></td><td>K. Han, Y. Wang and D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at <a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf">http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf</a>.</td></tr>
+</tbody>
+</table>
+</div>
+
+    
+<div class=twitter>
+<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+    <p class=tags>This entry was tagged as
+      <a href="/tag/ift6266.html">ift6266</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    <a href="https://github.com/fjavieralba/flasky">Theme</a>  by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'joao.eel';
+          s = 'gmail.com';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270"><li><i class="icon-linkedin-sign icon-large" ></i></li></a>
+        <a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="/feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+    <script type="text/javascript">
+        var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik-seaandsailor.rhcloud.com/" : "http://piwik-seaandsailor.rhcloud.com/");
+    document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+    </script><script type="text/javascript">
+    try {
+    var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+    piwikTracker.trackPageView();
+    piwikTracker.enableLinkTracking();
+    } catch( err ) {}
+    </script><noscript><p><img src="http://piwik-seaandsailor.rhcloud.com/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+  </body>
+</html>

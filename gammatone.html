@@ -65,9 +65,9 @@ made the signals I generated previously so noisy.</p>
 <p>In order to solve these problems, I added two updates to my previous
 code:</p>
 <ol class="arabic simple">
-<li>Dropping the dictionary I learned from the data and switched to a
+<li>Dropped the dictionary I learned from the data and switched to a
 gammatone dictionary.</li>
-<li>Generating the audio frames using Hamming windows with 50% overlap.</li>
+<li>Generated the audio frames using Hamming windows with 50% overlap.</li>
 </ol>
 <p>In the next sections, I will give a brief description and motivation
 for each of these updates. I will also show why they didn't work as
@@ -184,7 +184,7 @@ connecting two non-overlapping frames.</p>
 <h2>Experiment with sparse coding using gammatone atoms</h2>
 <p>Based on the ideas described above, I generated a sparse-coded version
 of the TIMIT dataset using my gammatone sparse coding library. I used
-gammatones with 50 different cosine frequencies between 50 and 8000
+gammatones with 50 different cosine frequencies between 150 and 8000
 Hz, timeshifts of 8 samples, and frames of length 160 with 50%
 overlap. For each frame, a sparse representation using 16 non-zero
 coefficients was extracted by using Orthogonal Matching Pursuit with a
@@ -300,7 +300,7 @@ spectral envelope model on my next post.</p>
 <table class="docutils citation" frame="void" id="han2014" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Han2014]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> K. Han, Y. Wang, D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at <a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf">http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf</a>.</td></tr>
+<tr><td class="label">[Han2014]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> K. Han, Y. Wang and D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at <a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf">http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf</a>.</td></tr>
 </tbody>
 </table>
 </div>

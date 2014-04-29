@@ -1,0 +1,217 @@
+Can read the source file?  0
+Executing on  brams0a.iro.umontreal.ca
+HOSTNAME: brams0a.iro.umontreal.ca
+PATH: /usr/lib64/openmpi/bin:/opt/condor/bin:/opt/lisa/os/epd-7.1.2/bin:/opt/lisa/os/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/diro/bin
+PYTHONPATH: /usr/lib64/python2.7/site-packages/openmpi:/opt/lisa/byhost/lib/python2.7/site-packages::/opt/lisa/os/lib/python2.7/site-packages:/opt/lisa/os/lib/python2.7/site-packages/vtk_python::/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/:/data/lisatmp/ift6266h14/santosjf/ift6266h14/
+LD_LIBRARY_PATH: /usr/lib64/openmpi/lib:/opt/lisa/byhost/lib:/opt/lisa/os/lib/vtk:/opt/lisa/os/lib/intelmkl/lib/32:/opt/lisa/os/lib:/opt/lisa/os/lib64:/usr/local/lib:/usr/lib64/atlas/:/opt/lisa/os/python2.4/lib/::/opt/lisa/os/lib32:/opt/lisa/byhost/lib32
+OMP_NUM_THREADS: 1
+CONDOR_JOB_LOGDIR: LOGS.NOBACKUP/python_pylearn2_pylearn2_scripts_train.py_ift6266h14_experiments_sp1600_conditional.yaml_2014-04-28_21-07-35.748898
+HOME: /u/santosjf
+GlobalJobId = "maggie46.iro.umontreal.ca#16477.0#1398733662"
+/data/lisatmp/ift6266h14/santosjf
+nb args: 1
+Running: command: "/opt/lisa/os/epd-7.1.2/bin/python pylearn2/pylearn2/scripts/train.py ift6266h14/experiments/sp1600_conditional.yaml"
+Can execute the cmd?  1
+/data/lisatmp/ift6266h14/santosjf/pylearn2/pylearn2/models/mlp.py:46: UserWarning: MLP changing the recursion limit.
+  warnings.warn("MLP changing the recursion limit.")
+/data/lisatmp/ift6266h14/santosjf/pylearn2/pylearn2/models/dbm/__init__.py:29: UserWarning: DBM changing the recursion limit.
+  warnings.warn("DBM changing the recursion limit.")
+/opt/lisa/os/epd-7.1.2/lib/python2.7/site-packages/numpy/lib/utils.py:1132: DeprecationWarning: The compiler package is deprecated and removed in Python 3.x.
+  import compiler
+/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/Theano-0.6.0-py2.7.egg/theano/sandbox/rng_mrg.py:768: UserWarning: MRG_RandomStreams Can't determine #streams from size ((Elemwise{add,no_inplace}.0,)), guessing 60*256
+  nstreams = self.n_streams(size)
+/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/Theano-0.6.0-py2.7.egg/theano/sandbox/rng_mrg.py:768: UserWarning: MRG_RandomStreams Can't determine #streams from size (Shape.0), guessing 60*256
+  nstreams = self.n_streams(size)
+ERROR (pylearn2.devtools.nan_guard): NaN detected
+ERROR (pylearn2.devtools.nan_guard): In an output
+ERROR (pylearn2.devtools.nan_guard): Inputs: 
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): TensorConstant{(1, 1) of -1.0}
+ERROR (pylearn2.devtools.nan_guard): A. TensorConstant{(1, 1) of -1.0}
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[-1.]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): Elemwise{Composite{[Composite{[sub(i0, mul(i1, i2))]}(i0, mul(i1, i2), i3)]}}.0
+ERROR (pylearn2.devtools.nan_guard): A. Elemwise{Composite{[Composite{[sub(i0, mul(i1, i2))]}(i0, mul(i1, i2), i3)]}}
+ B. SGD[targets]
+ C. Elemwise{Composite{[Cast{float64}(LT(i0, i1))]}}[(0, 0)]
+  D. mrg_uniform{TensorType(float64, matrix),inplace}
+   E. <TensorType(int32, matrix)>
+   F. Elemwise{Cast{int32}}
+    G. MakeVector
+     H. Shape_i{0}
+      I. SGD[features]
+     J. Shape_i{1}
+      K. y_W2
+  L. y_m_mean
+ M. y_stoch_m_mean
+ N. y_z
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[ 0.10251239, -0.03475178,  0.        , ...,  0.        ,
+        -0.13284985,  0.01092409],
+       [-0.03215644,  0.03070784,  0.04492151, ...,  0.        ,
+        -0.0138329 ,  0.06136319],
+       [ 0.        ,  0.05604834, -0.05099228, ...,  0.13208239,
+        -0.07574976,  0.        ],
+       ..., 
+       [ 0.        , -0.04879146,  0.        , ..., -0.06079427,
+         0.        ,  0.00378782],
+       [ 0.00297544,  0.02754491,  0.00026682, ...,  0.03056092,
+         0.        ,  0.06455593],
+       [-0.00378273,  0.00685282,  0.00927432, ...,  0.02858897,
+        -0.0570208 , -0.01192758]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): y_z
+ERROR (pylearn2.devtools.nan_guard): A. y_z
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[  0.00000000e+00,   0.00000000e+00,   4.81867439e-16, ...,
+          6.43383582e-25,   0.00000000e+00,   0.00000000e+00],
+       [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00, ...,
+          9.11415039e-14,   0.00000000e+00,   0.00000000e+00],
+       [  2.12701228e-27,   0.00000000e+00,   0.00000000e+00, ...,
+          0.00000000e+00,   0.00000000e+00,   1.84186548e-58],
+       ..., 
+       [  7.98669577e-35,   0.00000000e+00,   1.61672243e-36, ...,
+          0.00000000e+00,   1.05761094e-17,   0.00000000e+00],
+       [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00, ...,
+          0.00000000e+00,   1.36835261e-10,   0.00000000e+00],
+       [  0.00000000e+00,   0.00000000e+00,   0.00000000e+00, ...,
+          0.00000000e+00,   7.57349382e-05,   0.00000000e+00]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): Elemwise{Composite{[Cast{float64}(LT(i0, i1))]}}[(0, 0)].0
+ERROR (pylearn2.devtools.nan_guard): A. Elemwise{Composite{[Cast{float64}(LT(i0, i1))]}}[(0, 0)]
+ B. mrg_uniform{TensorType(float64, matrix),inplace}
+  C. <TensorType(int32, matrix)>
+  D. Elemwise{Cast{int32}}
+   E. MakeVector
+    F. Shape_i{0}
+     G. SGD[features]
+    H. Shape_i{1}
+     I. y_W2
+ J. y_m_mean
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[ 1.,  1.,  0., ...,  0.,  1.,  1.],
+       [ 1.,  1.,  1., ...,  0.,  1.,  1.],
+       [ 0.,  1.,  1., ...,  1.,  1.,  0.],
+       ..., 
+       [ 0.,  1.,  0., ...,  1.,  0.,  1.],
+       [ 1.,  1.,  1., ...,  1.,  0.,  1.],
+       [ 1.,  1.,  1., ...,  1.,  1.,  1.]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): y_stoch_m_mean
+ERROR (pylearn2.devtools.nan_guard): A. y_stoch_m_mean
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[  1.00000000e+00,   1.00000000e+00,   1.20682846e-13, ...,
+          1.58647687e-22,   1.00000000e+00,   1.00000000e+00],
+       [  1.00000000e+00,   1.00000000e+00,   1.00000000e+00, ...,
+          2.24739785e-11,   1.00000000e+00,   1.00000000e+00],
+       [  5.65512685e-25,   1.00000000e+00,   1.00000000e+00, ...,
+          1.00000000e+00,   1.00000000e+00,   5.19269418e-56],
+       ..., 
+       [  2.12343756e-32,   1.00000000e+00,   4.04905268e-34, ...,
+          1.00000000e+00,   3.11612068e-15,   1.00000000e+00],
+       [  1.00000000e+00,   1.00000000e+00,   1.00000000e+00, ...,
+          1.00000000e+00,   4.03168283e-08,   1.00000000e+00],
+       [  1.00000000e+00,   1.00000000e+00,   1.00000000e+00, ...,
+          1.00000000e+00,   9.88693865e-01,   1.00000000e+00]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): y_m_mean
+ERROR (pylearn2.devtools.nan_guard): A. y_m_mean
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[  1.00000000e+000,   1.00000000e+000,   1.45643493e-026, ...,
+          2.51690886e-044,   1.00000000e+000,   1.00000000e+000],
+       [  1.00000000e+000,   1.00000000e+000,   1.00000000e+000, ...,
+          5.05079711e-022,   1.00000000e+000,   1.00000000e+000],
+       [  3.19804597e-049,   1.00000000e+000,   1.00000000e+000, ...,
+          1.00000000e+000,   1.00000000e+000,   2.69640728e-111],
+       ..., 
+       [  4.50898706e-064,   1.00000000e+000,   1.63948276e-067, ...,
+          1.00000000e+000,   9.71020811e-030,   1.00000000e+000],
+       [  1.00000000e+000,   1.00000000e+000,   1.00000000e+000, ...,
+          1.00000000e+000,   1.62544664e-015,   1.00000000e+000],
+       [  1.00000000e+000,   1.00000000e+000,   1.00000000e+000, ...,
+          1.00000000e+000,   9.77515558e-001,   1.00000000e+000]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): Elemwise{Cast{float64}}.0
+ERROR (pylearn2.devtools.nan_guard): A. Elemwise{Cast{float64}}
+ B. InplaceDimShuffle{x,x}
+  C. Shape_i{0}
+   D. SGD[targets]
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[ 256.]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): TensorConstant{(1, 1) of 0.5}
+ERROR (pylearn2.devtools.nan_guard): A. TensorConstant{(1, 1) of 0.5}
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[ 0.5]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): Alloc.0
+ERROR (pylearn2.devtools.nan_guard): A. Alloc
+ B. Elemwise{Composite{[Composite{[add(true_div(i0, i1), true_div(i2, i3))]}(i0, add(i1, i2), i3, sub(i4, i2))]}}[(0, 0)]
+  C. InplaceDimShuffle{x,0}
+   D. Alloc
+    E. TensorConstant{(1,) of -0.0168}
+    F. Shape_i{1}
+     G. y_W2
+  H. Elemwise{mul,no_inplace}
+   I. TensorConstant{(1, 1) of 1e-06}
+   J. Elemwise{Cast{float64}}
+    K. InplaceDimShuffle{x,x}
+     L. Shape_i{0}
+      M. SGD[features]
+  N. InplaceDimShuffle{x,0}
+   O. Sum{0}
+    P. y_stoch_m_mean
+  Q. TensorConstant{(1, 1) of 0.9832}
+  R. Elemwise{Mul{output_types_preference=transfer_type{1}}}[(0, 1)]
+   S. TensorConstant{(1, 1) of 1.000001}
+   <J>
+ <L>
+ <F>
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[ 0.00752242,  0.00740321,  0.00798568, ...,  0.00811085,
+         0.006788  ,  0.00709406],
+       [ 0.00752242,  0.00740321,  0.00798568, ...,  0.00811085,
+         0.006788  ,  0.00709406],
+       [ 0.00752242,  0.00740321,  0.00798568, ...,  0.00811085,
+         0.006788  ,  0.00709406],
+       ..., 
+       [ 0.00752242,  0.00740321,  0.00798568, ...,  0.00811085,
+         0.006788  ,  0.00709406],
+       [ 0.00752242,  0.00740321,  0.00798568, ...,  0.00811085,
+         0.006788  ,  0.00709406],
+       [ 0.00752242,  0.00740321,  0.00798568, ...,  0.00811085,
+         0.006788  ,  0.00709406]])]
+ERROR (pylearn2.devtools.nan_guard): var
+ERROR (pylearn2.devtools.nan_guard): TensorConstant{(1, 1) of 1.0}
+ERROR (pylearn2.devtools.nan_guard): A. TensorConstant{(1, 1) of 1.0}
+ERROR (pylearn2.devtools.nan_guard): val
+ERROR (pylearn2.devtools.nan_guard): [array([[ 1.]])]
+ERROR (pylearn2.devtools.nan_guard): Node:
+ERROR (pylearn2.devtools.nan_guard): Elemwise{Composite{[Composite{[Composite{[Composite{[mul(add(i0, i1), sub(i2, i3))]}(true_div(i0, i1), mul(i2, i3, i4, i5), i6, i5)]}(mul(i0, i1, i2, i3, i4, i5), i6, i7, i8, i4, i5, i9)]}(i0, i1, i2, i3, inv(i4), i5, i6, i7, i8, i9)]}}[(0, 2)](TensorConstant{(1, 1) of -1.0}, Elemwise{Composite{[Composite{[sub(i0, mul(i1, i2))]}(i0, mul(i1, i2), i3)]}}.0, y_z, Elemwise{Composite{[Cast{float64}(LT(i0, i1))]}}[(0, 0)].0, y_stoch_m_mean, y_m_mean, Elemwise{Cast{float64}}.0, TensorConstant{(1, 1) of 0.5}, Alloc.0, TensorConstant{(1, 1) of 1.0})
+Traceback (most recent call last):
+  File "pylearn2/pylearn2/scripts/train.py", line 208, in <module>
+    train_obj.main_loop(time_budget=args.time_budget)
+  File "/data/lisatmp/ift6266h14/santosjf/pylearn2/pylearn2/train.py", line 203, in main_loop
+    rval = self.algorithm.train(dataset=self.dataset)
+  File "/data/lisatmp/ift6266h14/santosjf/pylearn2/pylearn2/training_algorithms/sgd.py", line 398, in train
+    self.sgd_update(*batch)
+  File "/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/Theano-0.6.0-py2.7.egg/theano/compile/function_module.py", line 579, in __call__
+    outputs = self.fn()
+  File "/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/Theano-0.6.0-py2.7.egg/theano/gof/link.py", line 714, in f
+    raise_with_op(node, thunk)
+  File "/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/Theano-0.6.0-py2.7.egg/theano/gof/link.py", line 712, in f
+    wrapper(i, node, *thunks)
+  File "/data/lisatmp/ift6266h14/santosjf/lib/python2.7/site-packages/Theano-0.6.0-py2.7.egg/theano/gof/link.py", line 727, in wrapper
+    f(*args)
+  File "/data/lisatmp/ift6266h14/santosjf/pylearn2/pylearn2/devtools/nan_guard.py", line 99, in nan_check
+    do_check_on(x, node, fn, False)
+  File "/data/lisatmp/ift6266h14/santosjf/pylearn2/pylearn2/devtools/nan_guard.py", line 78, in do_check_on
+    assert False
+AssertionError: 
+Apply node that caused the error: Elemwise{Composite{[Composite{[Composite{[Composite{[mul(add(i0, i1), sub(i2, i3))]}(true_div(i0, i1), mul(i2, i3, i4, i5), i6, i5)]}(mul(i0, i1, i2, i3, i4, i5), i6, i7, i8, i4, i5, i9)]}(i0, i1, i2, i3, inv(i4), i5, i6, i7, i8, i9)]}}[(0, 2)](TensorConstant{(1, 1) of -1.0}, Elemwise{Composite{[Composite{[sub(i0, mul(i1, i2))]}(i0, mul(i1, i2), i3)]}}.0, y_z, Elemwise{Composite{[Cast{float64}(LT(i0, i1))]}}[(0, 0)].0, y_stoch_m_mean, y_m_mean, Elemwise{Cast{float64}}.0, TensorConstant{(1, 1) of 0.5}, Alloc.0, TensorConstant{(1, 1) of 1.0})
+Inputs shapes: [(2000,), (1,), (2000,)]
+Inputs strides: [(8,), (8,), (8,)]
+Inputs types: [TensorType(float64, (True, True)), TensorType(float64, matrix), TensorType(float64, matrix), TensorType(float64, matrix), TensorType(float64, matrix), TensorType(float64, matrix), TensorType(float64, (True, True)), TensorType(float64, (True, True)), TensorType(float64, matrix), TensorType(float64, (True, True))]
+Inputs scalar values: ['not scalar', array([ 0.01]), 'not scalar']
+Use the Theano flag 'exception_verbosity=high' for a debugprint of this apply node.

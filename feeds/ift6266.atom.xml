@@ -1,5 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor</title><link href="/" rel="alternate"></link><link href="/feeds/ift6266.atom.xml" rel="self"></link><id>/</id><updated>2014-03-31T14:00:00-04:00</updated><entry><title>Using an auditory-inspired representation for speech</title><link href="/gammatone.html" rel="alternate"></link><updated>2014-03-31T14:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2014-03-31:gammatone.html</id><summary type="html">&lt;p&gt;I &lt;a class="reference external" href="http://www.seaandsailor.com/dict_learning.html"&gt;previously&lt;/a&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor</title><link href="/" rel="alternate"></link><link href="/feeds/ift6266.atom.xml" rel="self"></link><id>/</id><updated>2014-04-27T16:00:00-04:00</updated><entry><title>Using stochastic neurons for conditional computation</title><link href="/stochastic_neurons_conditional.html" rel="alternate"></link><updated>2014-04-27T16:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2014-04-27:stochastic_neurons_conditional.html</id><summary type="html">&lt;p&gt;As stated in my previous &lt;a class="reference external" href="/gammatone.html"&gt;post&lt;/a&gt;, I had some issues when trying to train
+my network while using sparse-coded speech frames as input/output. The
+network was getting stuck at the same point after processing a single
+batch, and processing additional batches did anything training-wise
+(performance, weights, etc., were all stuck). I tried different
+initialization ranges for the weight matrices, a different learning
+rate, different network architectures (unit types, different number of
+units and layers) but the results were still the same.&lt;/p&gt;
+&lt;p&gt;In the same post, I talked about sparsity not being enforced at the
+output. Since the whole dataset was sparse-coded and we were trying to
+predict the vector of sparse coefficients for the next frame, all
+outputs were expected to be as sparse as the inputs. This post
+describes what I did to try to mitigate this issue. I used stochastic
+neurons that enforce sparsity in the output layer of a network with
+the same architecture as the previous network. This brings in the
+problem of propagating gradients through stochastic units, but
+fortunately David Warde-Farley pointed me to a paper which presents
+some alternative solutions &lt;a class="citation-reference" href="#bengio2013" id="id1"&gt;[Bengio2013]&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The units I used at the output layer are similar to the ones called
+&amp;quot;Stochastic times Smooth&amp;quot; (STS) in &lt;a class="citation-reference" href="#bengio2013" id="id2"&gt;[Bengio2013]&lt;/a&gt;. The idea is that the
+output of a neuron is equal to the product of a stochastic part
+(sampled from a binomial distribution with probability
+&lt;span class="math"&gt;\(\sqrt{p_i}\)&lt;/span&gt;
+) and a smooth part (for example, a sigmoid or a
+linear function). The value of &lt;span class="math"&gt;\(p_i\)&lt;/span&gt;
+ itself comes from a
+non-linear computation based on the unit's input. The stochastic
+part serves as a &amp;quot;gater&amp;quot; which prevents the activation with a
+probability determined by the activation at the &amp;quot;gater path&amp;quot; of the
+unit. A sparsity constraint is imposed by a combination of the
+KL-divergence criterion for the sigmoids in the &amp;quot;gater path&amp;quot; of the
+unit with added noise (as explained in sections 1 and 2 of Appendix A
+in the referred paper).&lt;/p&gt;
+&lt;!-- add image showing how the STS unit is structured --&gt;
+&lt;p&gt;I found an implementation for these units by one of the authors
+(Nicholas Léonard) at &lt;a class="reference external" href="https://github.com/nicholas-leonard/delicious"&gt;GitHub&lt;/a&gt;, and updated it to the current Pylearn2
+interface. His implementation had support for &amp;quot;hybrid&amp;quot; STS units which
+are semi-stochastic (i.e., part of the output is deterministic), but I
+did not use it. These units have a 2-layer non-linear gater path (I
+used two sigmoidal layers) and a linear path for the output.&lt;/p&gt;
+&lt;p&gt;Now, for the results: sadly, switching to these units made no
+significant difference at first. I did some tests using the same
+training/testing/validation sets from Vincent's TIMIT dataset but
+filtering it such that there were only sentences from male
+speakers. The network was still stuck at the same objective value
+after the first epoch. So, I decided to take a look on an alternative
+hypothesis: maybe less sparsity/a different sparse coding
+configuration could help?&lt;/p&gt;
+&lt;div class="section" id="using-an-undercomplete-gammatone-dictionary"&gt;
+&lt;h2&gt;Using an undercomplete gammatone dictionary&lt;/h2&gt;
+&lt;p&gt;After I have seen that tinkering with the hyperparameters and
+switching the output layer to an STS layer did not solve my problem, I
+decided to play a bit with the inputs/outputs I was using. My sparse
+coding scheme was resulting in a very sparse representation, as each
+frame with 160 samples was being represented by up to 16 sparse coding
+coefficients. Since the dictionary had 950 different atoms, it means
+that only approximately 1.7% of the coefficients were non-zero, both
+in the input and in the output. Note that while the quality of the
+reconstruction is acceptable (as you can listen in the samples below),
+this gives us no idea on whether it is a good representation
+phone-wise (i.e., if there's any relationship between the chosen atoms
+and specific phones). Given the poor results I had with the previous
+representation, I guess the representation I chose could be one of the
+culprits for the bad performance.&lt;/p&gt;
+&lt;p&gt;To test the effect of a different sparse representation, I decided to
+switch the dictionary used by my sparse coding scheme to an
+undercomplete dictionary (i.e., a dictionary where the number of atoms
+is smaller than the length of each atom), using longer frames and
+increasing the overlap to 87.5% instead of 50%. Another thing that
+motivated this change was realizing my previous dictionary still had a
+big problem: a dictionary with atoms with length 160 was not able to
+hold full atoms for frequencies lower than 1000 Hz, as the envelope
+for lower frequency atoms decay is slower than for high-frequency
+ones. To be able to have atoms for the desired frequency range (150 to
+8000 Hz), I would need to increase the atom length. However, the
+tradeoff between atom length and number of atoms in an overcomplete
+dictionary would make the sparse coefficient vector even longer than
+the one I had (950 coefficients). I made some experiments with an
+undercomplete dictionary with longer frames (1600 samples, equivalent
+to 100 ms at 16 kHz sampling rate) and more frequency values for the
+gammatones (64, instead of 50), and felt that the reconstruction
+quality decreased a bit. However, increasing the overlap between
+samples led to a decent reconstruction quality. You can listen to the
+original sample and the three reconstructed samples below:&lt;/p&gt;
+&lt;p&gt; Original: &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/original.ogg" type="audio/ogg" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+
+&lt;p&gt; Reconstructed with "wrong" overcomplete dictionary (length 160, overlap 50%, atoms not correctly limited at frame borders): &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/reconst_160_80.ogg" type="audio/ogg" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+
+&lt;p&gt; Reconstructed with undercomplete dictionary (length 1600, overlap 50%): &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/reconst_1600_800.ogg" type="audio/ogg" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;
+
+&lt;p&gt; Reconstructed with undercomplete dictionary (length 1600, overlap 87.5%): &lt;br&gt;
+&lt;audio controls="controls" &gt;
+      &lt;source src="files/reconst_1600_1400.ogg" type="audio/ogg" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;&lt;p&gt;The final dictionary I used had an atom length of 1600 and 1536 atoms.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="trouble-with-a-capital-t-as-in-import-theano-tensor-as-t"&gt;
+&lt;h2&gt;Trouble with a capital T (as in &lt;tt class="docutils literal"&gt;import theano.tensor as T&lt;/tt&gt;)&lt;/h2&gt;
+&lt;p&gt;Unfortunately, even after switching the previous dataset by the one
+generated with the undercomplete dictionary, the behavior of my
+network during training was still the same... with the added problem
+of NaNs appearing eventually after being stuck for around 30
+iterations (with &lt;a class="reference external" href="https://github.com/jfsantos/ift6266h14/blob/master/experiments/mlp_sparse/sp1600_conditional.yaml"&gt;this&lt;/a&gt; YAML file, which uses only a bunch of sentences
+from the validation set to save processing time). I am not sure on
+what is causing this and searching at the &lt;a class="reference external" href="https://groups.google.com/forum/#!topic/pylearn-users/yr-i_RzY9a0"&gt;pylearn-users&lt;/a&gt; mailing
+list, I have seen that David Krueger also had a &lt;a class="reference external" href="http://dskspeechsynthesis.wordpress.com/2014/04/25/no-more-nans/"&gt;similar issue&lt;/a&gt;
+recently. In my case, using the &lt;tt class="docutils literal"&gt;nan_guard&lt;/tt&gt; as suggested by Ian in
+this thread showed that the error happened during the computation of a
+weight matrix inside the STS layer, namely the second weight matrix
+used in the gater path of the unit (second layer of the non-linear
+part). The error log is very low level as you can see &lt;a class="reference external" href="files/0.err"&gt;here&lt;/a&gt;, which
+makes sense since it comes from inside an optimized Theano
+graph. Altering the sparsity target in the output layer seems to avoid
+this, but the results are still the same. Additionally, the predicted
+coefficients are very far from the sparsity target I have set for the
+output layer: 10% of the coefficients should be non-zero, but I am
+getting something close to 50% instead (approximately 750 non-zero
+coefficients per frame).&lt;/p&gt;
+&lt;p&gt;Here is an example of an audio file generated with the trained
+network, using the previous frame and the previous, current, and next
+phone as input:&lt;/p&gt;
+&lt;p&gt; &lt;audio controls="controls" &gt;
+      &lt;source src="files/test_sparse.ogg" type="audio/ogg" /&gt;
+      Your browser does not support the audio element.
+&lt;/audio&gt; &lt;/p&gt;&lt;p&gt;(Yes, it does not sound like speech at all.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="ideas-for-the-future"&gt;
+&lt;h2&gt;Ideas for the future?&lt;/h2&gt;
+&lt;p&gt;None of my experiments led to results that would convince one that
+using a sparse representation based on gammatones would be a useful
+thing for speech synthesis. Architectures using time-domain audio
+samples as the input/output had much more exciting results. Looking
+forward, I would like to experiment with my other representation based
+on the gammatonegram and convolutional neural nets. As the
+gammatonegram for consecutive frames can be seen as an image (where
+each time-frequency cell is a &amp;quot;pixel&amp;quot;), the usual 2D CNNs could be
+tested.&lt;/p&gt;
+&lt;p&gt;Even though our course is over, my PhD research topic is speech
+processing, so I believe I'll continue playing with deep learning in
+the future. I am interested in investigating applications of deep
+learning to speech enhancement systems. There is a very recent paper
+(to appear in this year's ICASSP) where the authors used a DNN to
+learn spectral masks to reduce reverberation in speech signals
+&lt;a class="citation-reference" href="#han2014" id="id3"&gt;[Han2014]&lt;/a&gt;. It would be interesting to see if a similar idea could be
+used not only for reverberation, but for speech enhancement under
+different kinds of environment. Other ideas will hopefully pop-up
+along the way!&lt;/p&gt;
+&lt;table class="docutils citation" frame="void" id="bengio2013" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;[Bengio2013]&lt;/td&gt;&lt;td&gt;&lt;em&gt;(&lt;a class="fn-backref" href="#id1"&gt;1&lt;/a&gt;, &lt;a class="fn-backref" href="#id2"&gt;2&lt;/a&gt;)&lt;/em&gt; Y. Bengio, N. Léonard, and A. Courville, “Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation,” arXiv:1308.3432 [cs], Aug. 2013.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table class="docutils citation" frame="void" id="han2014" rules="none"&gt;
+&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id3"&gt;[Han2014]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;K. Han, Y. Wang and D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at &lt;a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf"&gt;http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf&lt;/a&gt;.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</summary><category term="ift6266"></category></entry><entry><title>Using an auditory-inspired representation for speech</title><link href="/gammatone.html" rel="alternate"></link><updated>2014-03-31T14:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2014-03-31:gammatone.html</id><summary type="html">&lt;p&gt;I &lt;a class="reference external" href="http://www.seaandsailor.com/dict_learning.html"&gt;previously&lt;/a&gt;
 described an approach to representing speech signals by decomposing
 them to an arbitrary dictionary (using a sparse coding algorithm such
 as Orthogonal Matching Pursuit). In that post, I showed that learning
@@ -18,9 +190,9 @@ made the signals I generated previously so noisy.&lt;/p&gt;
 &lt;p&gt;In order to solve these problems, I added two updates to my previous
 code:&lt;/p&gt;
 &lt;ol class="arabic simple"&gt;
-&lt;li&gt;Dropping the dictionary I learned from the data and switched to a
+&lt;li&gt;Dropped the dictionary I learned from the data and switched to a
 gammatone dictionary.&lt;/li&gt;
-&lt;li&gt;Generating the audio frames using Hamming windows with 50% overlap.&lt;/li&gt;
+&lt;li&gt;Generated the audio frames using Hamming windows with 50% overlap.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;In the next sections, I will give a brief description and motivation
 for each of these updates. I will also show why they didn't work as
@@ -137,7 +309,7 @@ connecting two non-overlapping frames.&lt;/p&gt;
 &lt;h2&gt;Experiment with sparse coding using gammatone atoms&lt;/h2&gt;
 &lt;p&gt;Based on the ideas described above, I generated a sparse-coded version
 of the TIMIT dataset using my gammatone sparse coding library. I used
-gammatones with 50 different cosine frequencies between 50 and 8000
+gammatones with 50 different cosine frequencies between 150 and 8000
 Hz, timeshifts of 8 samples, and frames of length 160 with 50%
 overlap. For each frame, a sparse representation using 16 non-zero
 coefficients was extracted by using Orthogonal Matching Pursuit with a
@@ -253,7 +425,7 @@ spectral envelope model on my next post.&lt;/p&gt;
 &lt;table class="docutils citation" frame="void" id="han2014" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
 &lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;[Han2014]&lt;/td&gt;&lt;td&gt;&lt;em&gt;(&lt;a class="fn-backref" href="#id3"&gt;1&lt;/a&gt;, &lt;a class="fn-backref" href="#id4"&gt;2&lt;/a&gt;)&lt;/em&gt; K. Han, Y. Wang, D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at &lt;a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf"&gt;http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf&lt;/a&gt;.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="label"&gt;[Han2014]&lt;/td&gt;&lt;td&gt;&lt;em&gt;(&lt;a class="fn-backref" href="#id3"&gt;1&lt;/a&gt;, &lt;a class="fn-backref" href="#id4"&gt;2&lt;/a&gt;)&lt;/em&gt; K. Han, Y. Wang and D. Wang, “Learning spectral mapping for speech dereverberation”, To appear in the Proceedings of the IEEE ICASSP 2014, 2014. Available at &lt;a class="reference external" href="http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf"&gt;http://www.cse.ohio-state.edu/~dwang/papers/HWW.icassp14.pdf&lt;/a&gt;.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
