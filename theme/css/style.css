@@ -163,3 +163,7 @@ img.align-left {
   -webkit-border-top-right-radius: 10px !important;
   font-size: 0.85em !important;
 }
+
+/* Publications */
+ul.pubs li  { margin: 0; padding: 0px 10px 10px 10px; }
+

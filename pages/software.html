@@ -4,7 +4,7 @@
     <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,700' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title> WinPython: a portable scientific Python distribution for Windows | seaandsailor </title>
+    <title> Software | seaandsailor </title>
 
     <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
@@ -45,61 +45,58 @@
       </div>
       <div class=separator></div>        
         <div class=body>
-    <h1 class="title"> WinPython: a portable scientific Python distribution for Windows</h1>
-    <p class=date> 25 06 2013 </p>
-    <p>Recently I developed a <a class="reference external" href="http://bitbucket.org/jfsantos/sitest">piece of software</a> for administering speech
-intelligibility listening tests and discovered a small issue: I am not
-an administrator of the computer that I am going to use for the tests,
-so I cannot install any software. Since the computer is running
-Windows, there is no standard Python distribution there. I already
-knew <a class="reference external" href="http://portablepython.com">Portable Python</a>, which is (surprise!) a portable Python
-distribution that can be run from a USB storage device. However, the
-first version of my code was using PyAudio, which was not included in
-this distribution. Since this module uses binary wrappers to
-PortAudio, installation is not as straightforward as copying a bunch
-of .py files, and I could not find out how to install it to my USB
-drive... but then, WinPython came to the rescue!</p>
-<p><a class="reference external" href="https://code.google.com/p/winpython/">WinPython</a> is a complete
-NumPy/SciPy portable development environment, which also includes an
-IDE (<a class="reference external" href="https://code.google.com/p/spyderlib/">Spyder</a>), my favorite
-version control system (Mercurial) and Qt tools for GUI
-development. However, what made me like it so much is the WinPython
-Package Manager (<a class="reference external" href="https://code.google.com/p/winpython/wiki/WPPM">WPPM</a>), which allows one
-to install any packages that can be installed with <em>easy_install</em>,
-<em>pip</em>, or <em>distutils</em> standard installers. The latter is specially
-interesting because <em>distutils</em> installers include binary
-dependencies, so you do not need a C/C++ compiler. If scientific
-computing is your thing, maybe the library you need is just a visit to
-<a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Christoph Gohlke's page</a> away (which was my case
-with PyAudio).</p>
-<p>Another interesting feature is the possibility of converting your
-portable distribution to a more &quot;conventional&quot; Python installation on
-Windows by adding some keys to the registry (this is also done through
-the WinPython Control Panel). Also, both Python 2.7 and Python 3.3 are
-available, with support to 32 and 64 bit Windows XP/7/8.</p>
-
-    
-<div class=twitter>
-<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-</div>
-    <p class=tags>This entry was tagged as
-      <a href="/tag/development.html">development</a>
-    </p>
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+    <div class='page'>
+        <h1> Software </h1>
+        <h2>Developed by me</h2>
+<p>Some software I developed and distribute freely. Unless noted, all the
+software distributed here is under a <a href="/LICENSE.txt">BSD-style license</a>.</p>
+<ul>
+<li>
+<p><a href="https://bitbucket.org/jfsantos/auditoryfilterbanks">AuditoryFilterbanks</a>: cochlear and modulation filterbanks from the Auditory Toolbox translated to C++. Includes MEX wrappers.</p>
+</li>
+<li>
+<p><a href="https://bitbucket.org/jfsantos/videotracker">Videotracker</a>: An object tracker based on SURF features, implemented in Python and OpenCV.</p>
+</li>
+<li>
+<p><a href="../jitter_shimmer.praat">Praat shimmer/jitter batch extractor</a>: Praat script for extracting shimmer and jitter from a list of audio files.</p>
+</li>
+</ul>
+<h2>Other software and resources</h2>
+<p>Below are some pointers to software and resources I found useful in my
+research (and did not have to write because they already existed!).</p>
+<ul>
+<li>
+<p>Praat book (Speech signal processing with Praat):
+    <a href="http://www.fon.hum.uva.nl/david/sspbook/sspbook.pdf">http://www.fon.hum.uva.nl/david/sspbook/sspbook.pdf</a></p>
+</li>
+<li>
+<p>Some very useful Praat scripts:
+    <a href="http://www.helsinki.fi/~lennes/praat-scripts">http://www.helsinki.fi/~lennes/praat-scripts</a>/</p>
+</li>
+<li>
+<p>SPTK (Speech Signal Processing Toolkit): a bunch of UNIX-style
+    command line tools for speech processing
+    <a href="http://sp-tk.sourceforge.net">http://sp-tk.sourceforge.net</a>/</p>
+</li>
+<li>
+<p>libassp (Advanced Speech Signal Processor): a C library (with Tcl
+    wrappers) for extracting features from speech signals.
+    <a href="http://libassp.sourceforge.net">http://libassp.sourceforge.net</a>/</p>
+</li>
+<li>
+<p>WaveSurfer:
+    <a href="http://www.speech.kth.se/wavesurfer">http://www.speech.kth.se/wavesurfer</a>/</p>
+</li>
+<li>
+<p>A list of MATLAB toolboxes is also available at the <a href="http://musaelab.ca/software/">MuSAE Lab website</a>.</p>
+</li>
+<li>
+<p>Sonic Visualizer:
+    <a href="http://sonicvisualiser.org">http://sonicvisualiser.org</a>/</p>
+</li>
+</ul>
+    </div>
+        </div>
         
 <div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
