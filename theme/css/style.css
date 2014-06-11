@@ -16,6 +16,7 @@ h1.title                    { width: 560px; }
 h1, h2                      { margin: 10px 0 25px 0; }
 h1                          { font-size: 36px; line-height: 40px; }
 h2                          { font-size: 28px; line-height: 32px; }
+h3							{ font-size: 18px; font-weight: bold; }
 
 /* layout elements */
 div.container               { width: 740px; margin: 48px auto; padding: 0; }
