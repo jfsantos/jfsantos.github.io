@@ -1,0 +1,71 @@
+==================================================================
+https://keybase.io/jfsantos
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://seaandsailor.com
+  * I am jfsantos (https://keybase.io/jfsantos) on keybase.
+  * I have a public key with fingerprint C422 70CC D7E3 C653 09B0  E52E 06AF B67E AD5E 95E5
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "c42270ccd7e3c65309b0e52e06afb67ead5e95e5",
+            "host": "keybase.io",
+            "key_id": "06afb67ead5e95e5",
+            "uid": "f4aa90327b7480a8744f93b858fb8900",
+            "username": "jfsantos"
+        },
+        "revoke": {
+            "sig_ids": [
+                "98ee58f4884552a4c7568ab4158e2ed0eb4c8dcfc656d64c04c50061f6a19eb00f"
+            ]
+        },
+        "service": {
+            "hostname": "seaandsailor.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1413203784,
+    "expire_in": 157680000,
+    "prev": "127d85a73965fa9cc81d16a46e14a5615ec6aec9d075603c18477b5d244a807f",
+    "seqno": 6,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v1.1.3
+Comment: https://keybase.io/crypto
+
+yMIjAnicbVJbSBVBGD6WaXkqejC6QLcpeiizmd2Z2dljhkL3epFuDykyOzurm7p7
+3D2espCiCOohox7sHmWUh0IlegkpKyu0gu4PCkVQaS9d6AJFFDUr9da8DPP/3/9d
+hv/2uJGxvKyD8cFxp+xDQ1n3b5Y1xNYV9a7YDizfbgSJ7aBGDl+O61XJIBm4Xgok
+gMCaZkAhbEPqghIdmhaURJOQcseihuQ2kSaRBBSAaj+MJhSNxUNZ6Pqqph6Vrq2q
+/8E3DDcczLkJdc2wDMwgZwbGjqlbjDDHYiaEETCUgcfrpEJvdkLupfwQNBWAQKb9
+GhlZDt0qpRKCxCZgMinVKGYME6JxLAxCGbcwIkxq0obSwoLZwlFZqE2xgFgQCCly
+KEemtCB0QIXiVoppVwyTR7H+qoeSc88OuVvrB4XCr1PekoGf8oVfq7rVqVQyERlL
+NSYj9BZpVf7lqbRcz1b/qgbSMghd3wMJpJAi5UbECCNdg7rBcAGQW5NuICvdCEEM
+yqA6kYxMK0qkGTYj3NBNShxuCsGQjSjHVCLMCUVECsqlMG2oYkNdIIYNwyK2hjFn
+0HBAlKze80GCKpu8KsrkVnk81RBI0NRzozw7lpUXyxk1ItqMWN6YCf/2ZV927s+x
+bdcvf/91viK/zGqd92LQ61l6+Iv58MeU079PypYe0ud3vpIXXi+P6y3taDQ/sCxz
+/EHN3VhhddHRxUvR5y70oDiz+x2Vs1/e3VV47VLjUO/K5t6L82tzR7ZU4A+bF/74
+1FQ3V2+vQY/EBvvxvW+ZPfnvPrV9La1vXf9s9N43Q9NByYK35ZO6duD4+dX7tzXn
+aI2vEhPLn3SUHWtJ19Mvg0viM1uN5xvvDVb0TZ51dqC/4yZ9Gl9QvvqK/33qQNi9
+s8S7mlzv5lqzirI3zcFHtgXtC3PWvj93a3xfw8O2TjDD6/64as2dE8WLHJxBRqn9
++Gne9Q+ZsV3P+s/8Hj/t2Nc/QxMvUQ==
+=EEJ1
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/jfsantos
+
+==================================================================
