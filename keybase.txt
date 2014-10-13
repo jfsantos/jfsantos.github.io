@@ -25,7 +25,7 @@ To claim this, I am signing this object:
             ]
         },
         "service": {
-            "hostname": "seaandsailor.com",
+            "hostname": "www.seaandsailor.com",
             "protocol": "http:"
         },
         "type": "web_service_binding",
