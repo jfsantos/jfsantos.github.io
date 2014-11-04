@@ -18,18 +18,13 @@ the developers!) and give you something to play with.&lt;/p&gt;
 &lt;p&gt;To be able to run the code in this post (also distributed as an IJulia
 notebook), you will need to install
 &lt;a class="reference external" href="http://julialang.org/downloads"&gt;Julia&lt;/a&gt; (of course!) and the
-following packages: - &lt;a class="reference external" href="https://github.com/JuliaDSP/DSP"&gt;DSP.jl&lt;/a&gt;:
-signal processing functions (filtering, spectrograms/periodograms,
-window functions...). -
-&lt;a class="reference external" href="https://github.com/dancasimiro/WAV.jl"&gt;WAV.jl&lt;/a&gt;: loading/writing WAV
-files. - &lt;a class="reference external" href="https://github.com/stevengj/PyPlot.jl"&gt;PyPlot.jl&lt;/a&gt;: a Julia
-interface to the &lt;a class="reference external" href="http://matplotlib.org"&gt;Matplotlib&lt;/a&gt; plotting
-library. This is actually a Python library, but there is very little
-overhead (for examples, arrays are passed to it without making copies).
-- &lt;a class="reference external" href="https://github.com/JuliaLang/IJulia.jl"&gt;IJulia.jl&lt;/a&gt;: where the
-magic happens :) IJulia notebooks work exactly like IPython notebooks.
-In fact, they all share the same infrastructure (more on this
-&lt;a class="reference external" href="http://jupyter.org"&gt;here&lt;/a&gt;).&lt;/p&gt;
+following packages:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://github.com/JuliaDSP/DSP.jl"&gt;DSP.jl&lt;/a&gt;: signal processing functions (filtering, spectrograms/periodograms, window functions...).&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://github.com/dancasimiro/WAV.jl"&gt;WAV.jl&lt;/a&gt;: loading/writing WAV files.&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://github.com/stevengj/PyPlot.jl"&gt;PyPlot.jl&lt;/a&gt;: a Julia interface to the &lt;a class="reference external" href="http://matplotlib.org"&gt;Matplotlib&lt;/a&gt; plotting library. This is actually a Python library, but there is very little overhead (for examples, arrays are passed to it without making copies).&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://github.com/JuliaLang/IJulia.jl"&gt;IJulia.jl&lt;/a&gt;: where the magic happens :) IJulia notebooks work exactly like IPython notebooks. In fact, they all share the same infrastructure (more on this &lt;a class="reference external" href="http://jupyter.org"&gt;here&lt;/a&gt;).&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Installing packages in Julia is easy. Just run the following commands in
 the Julia REPL:&lt;/p&gt;
 &lt;pre class="code julia literal-block"&gt;
