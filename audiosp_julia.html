@@ -101,7 +101,7 @@ the Julia REPL:</p>
 <span class="c"># PyPlot includes a specgram function, but let's use the native</span>
 <span class="c"># implementation from DSP.jl. The function below extracts a</span>
 <span class="c"># spectrogram with standard parameters for speech (25ms Hanning windows</span>
-<span class="n">and</span> <span class="mi">10</span><span class="n">ms</span> <span class="n">overlap</span><span class="p">),</span> <span class="n">then</span> <span class="n">plots</span> <span class="n">it</span> <span class="n">and</span> <span class="n">returns</span> <span class="n">it</span> <span class="o">.</span>
+<span class="c"># and 10ms overlap), then plots it and returns it .</span>
 
 <span class="k">function</span><span class="nf"> plot_spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
     <span class="n">S</span> <span class="o">=</span> <span class="n">spectrogram</span><span class="p">(</span><span class="n">s</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="nb">convert</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mf">25e-3</span><span class="o">*</span><span class="n">fs</span><span class="p">),</span>
