@@ -1,5 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 03 Nov 2014 23:00:00 -0500</lastBuildDate><item><title>A really brief introduction to audio signal processing in Julia</title><link>/audiosp_julia.html</link><description>&lt;div class="section" id="introduction"&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>seaandsailor</title><link>/</link><description></description><atom:link href="/feeds/blog.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 01 Dec 2016 12:00:00 -0500</lastBuildDate><item><title>Model checkpointing using meta-graphs in TensorFlow</title><link>/tensorflow-checkpointing.html</link><description>&lt;p&gt;Deep learning models usually take a while to train, even on GPUs, so being able
+to checkpoint intermediate stages in training is really important. Frameworks
+like &lt;a href="http://keras.io"&gt;Keras&lt;/a&gt; usually offer functionality to store learned
+variables like weights and biases, but for resuming training for a checkpoint,
+one might also need to restore the optimizer state (that will be the case if
+you use any optimizer that stores any kind of state, like Adam). Ideally, we
+would like to store &lt;em&gt;everything&lt;/em&gt; it needs and not have to reinstantiate the
+entire graph again, and this is possible in TensorFlow by using meta-graphs.&lt;/p&gt;
+&lt;p&gt;After checking the &lt;a href="https://www.tensorflow.org/versions/r0.11/how_tos/meta_graph/index.html"&gt;documentation&lt;/a&gt; on
+meta-graphs, I tried to quickly hack an example but there were a few gotchas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;if you don't name your variables passing the &lt;code&gt;name='name'&lt;/code&gt; argument when you
+  create them, you will have a hard time trying to get their values&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;variables that are not stored in collections cannot be easily retrieved&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;this procedure, even if done correctly, will only store your TensorFlow graph
+  and variables that are part of it. This usually does not include in which
+  epoch/iteration the training procedure was when it stopped.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I found an
+&lt;a href="http://stackoverflow.com/questions/38829641/tensorflow-train-import-meta-graph-does-not-work"&gt;example&lt;/a&gt;
+that illustrates how to solve the first two issues on Stack Overflow. The
+latter one, while trivial, is also a common use case when you train your models
+in environments you cannot control (like Amazon EC2, Microsoft Azure, your
+university cluster, or even your own computer if you have a power failure!), so
+I decided to prepare a simple
+&lt;a href="https://gist.github.com/jfsantos/bc37eb9bc506a6f165152d676e3ccd42"&gt;example&lt;/a&gt;
+that covers that case as well. The example is based on the &lt;a href="https://github.com/aymericdamien/TensorFlow-Examples"&gt;logistic regression
+tutorial&lt;/a&gt; by Aymeric
+Damian (which, by the way, is a great resource if you are just learning
+TensorFlow).&lt;/p&gt;
+&lt;p&gt;To test the example, do the following:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Run the file without any arguments (&lt;code&gt;python
+   logistic_regression_with_checkpointing.py&lt;/code&gt;). It will run for 5 epochs and
+   save checkpoints for each epoch.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run file again, now passing &lt;code&gt;--load
+   True --max_epochs 10&lt;/code&gt; as arguments. The script will detect it has already
+   trained for 5 epochs, and run for another 5 epochs.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You will end up with a bunch of files called &lt;code&gt;model.ckpt-{epoch}&lt;/code&gt; and
+&lt;code&gt;model.ckpt-{number}.meta&lt;/code&gt;. The former will contain your variable values, and
+the latter (the ones ending in &lt;code&gt;.meta&lt;/code&gt;) store the meta-graph. When running with
+&lt;code&gt;--load True&lt;/code&gt;, the code will determine when we last saved the model (&lt;a href="https://gist.github.com/jfsantos/bc37eb9bc506a6f165152d676e3ccd42#file-logistic_regression_with_checkpointing-py-L62"&gt;lines
+62-65&lt;/a&gt;),
+create a new &lt;code&gt;tf.train.Saver&lt;/code&gt; object based on the exported meta-graph, and
+later restore the model parameters and also placeholders and operations we need
+in order to continue training (in this case, the placeholders &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; and
+the operations to compute the cost function, update the model, and do inference
+with it).&lt;/p&gt;
+&lt;p&gt;I wrote this example for myself but hope it will be useful for other people. If
+you are reading this, that is probably the case!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jfsantos</dc:creator><pubDate>Thu, 01 Dec 2016 12:00:00 -0500</pubDate><guid>tag:,2016-12-01:tensorflow-checkpointing.html</guid><category>development</category></item><item><title>A really brief introduction to audio signal processing in Julia</title><link>/audiosp_julia.html</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;If you are into scientific computing, you probably have already heard
 about &lt;a class="reference external" href="http://julialang.org"&gt;Julia&lt;/a&gt;, the magical language that aims
