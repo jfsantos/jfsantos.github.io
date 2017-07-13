@@ -1,0 +1,233 @@
+<title>Demo</title>
+<link rel=stylesheet type=text/css href="./sakura.css">
+<h1>Speech dereverberation using context-aware recurrent neural networks</h1>
+
+<p>This is the accompanying material for the paper "Speech dereverberation using
+context-aware recurrent neural networks". In this page, you can find a few samples
+of speech enhanced by the three models presented in our paper and by a state-of-the-art
+speech enhancement algorithm (spendred reference here).</p>
+
+<h2>Samples</h2>
+<table>
+    <tr>
+        <th>T60</th>
+        <th>Wu2016</th>
+        <th>Wu2017</th>
+        <th>Proposed</th>
+        <th>spendred</th>
+    </tr>
+    
+        <tr>
+        <th>0.3</th>
+        
+            <th><audio id="0.3_1">
+            <source src="samples/wu2016/0.30_01_white_infdB/S_68_03.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.3_1')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.3_2">
+            <source src="samples/wu2017/0.30_01_white_infdB/S_68_03.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.3_2')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.3_3">
+            <source src="samples/proposed/0.30_01_white_infdB/S_68_03.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.3_3')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.3_4">
+            <source src="samples/spendred/0.30_01_white_infdB/S_68_03.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.3_4')" type="button">Play</button>
+            
+            </th>
+        
+        </tr>
+    
+        <tr>
+        <th>0.6</th>
+        
+            <th><audio id="0.6_1">
+            <source src="samples/wu2016/0.60_01_white_infdB/S_69_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.6_1')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.6_2">
+            <source src="samples/wu2017/0.60_01_white_infdB/S_69_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.6_2')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.6_3">
+            <source src="samples/proposed/0.60_01_white_infdB/S_69_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.6_3')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.6_4">
+            <source src="samples/spendred/0.60_01_white_infdB/S_69_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.6_4')" type="button">Play</button>
+            
+            </th>
+        
+        </tr>
+    
+        <tr>
+        <th>0.9</th>
+        
+            <th><audio id="0.9_1">
+            <source src="samples/wu2016/0.90_01_white_infdB/S_71_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.9_1')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.9_2">
+            <source src="samples/wu2017/0.90_01_white_infdB/S_71_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.9_2')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.9_3">
+            <source src="samples/proposed/0.90_01_white_infdB/S_71_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.9_3')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="0.9_4">
+            <source src="samples/spendred/0.90_01_white_infdB/S_71_01.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('0.9_4')" type="button">Play</button>
+            
+            </th>
+        
+        </tr>
+    
+        <tr>
+        <th>1.2</th>
+        
+            <th><audio id="1.2_1">
+            <source src="samples/wu2016/1.20_01_white_infdB/S_68_02.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.2_1')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="1.2_2">
+            <source src="samples/wu2017/1.20_01_white_infdB/S_68_02.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.2_2')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="1.2_3">
+            <source src="samples/proposed/1.20_01_white_infdB/S_68_02.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.2_3')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="1.2_4">
+            <source src="samples/spendred/1.20_01_white_infdB/S_68_02.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.2_4')" type="button">Play</button>
+            
+            </th>
+        
+        </tr>
+    
+        <tr>
+        <th>1.5</th>
+        
+            <th><audio id="1.5_1">
+            <source src="samples/wu2016/1.50_01_white_infdB/S_70_08.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.5_1')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="1.5_2">
+            <source src="samples/wu2017/1.50_01_white_infdB/S_70_08.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.5_2')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="1.5_3">
+            <source src="samples/proposed/1.50_01_white_infdB/S_70_08.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.5_3')" type="button">Play</button>
+            
+            </th>
+        
+            <th><audio id="1.5_4">
+            <source src="samples/spendred/1.50_01_white_infdB/S_70_08.wav" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <button onclick="playAudio('1.5_4')" type="button">Play</button>
+            
+            </th>
+        
+        </tr>
+    
+</ul>
+
+<script>
+function playAudio(id) {
+    var x = document.getElementById(id);
+    x.play();
+}
+</script>
+
