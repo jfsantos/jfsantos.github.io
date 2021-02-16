@@ -9,26 +9,6 @@
     <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/font-awesome.css" type="text/css"/>
-        
-    <script type= "text/javascript">
-        var s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
-        s[(window.opera ? "innerHTML" : "text")] =
-            "MathJax.Hub.Config({" + 
-            "    config: ['MMLorHTML.js']," + 
-            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
-            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
-            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-            "    tex2jax: { " +
-            "        processEscapes: true }, " +
-            "    'HTML-CSS': { " +
-            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
-            "    } " +
-            "}); ";
-        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
-    </script>
-
   </head>
   <body>
     <div class=container>
@@ -54,8 +34,8 @@
 <li>Edit <code>/Users/myusername/.matlab/R2013a/mexopts.sh</code>, replacing all instances of <code>10.8</code> to <code>10.10</code> in the section corresponding to Mac 64 bits (i.e., everything after the line <code>maci64)</code> and the end of the file).</li>
 </ol>
 <p>After doing this, calling <code>mex</code> worked, but I was still not able to compile my MEX files. The error message I got was the following:</p>
-<div class="highlight"><pre>error: unknown <span class="nb">type </span>name <span class="s1">&#39;char16_t&#39;</span>
-typedef char16_t CHAR16_T;<span class="sb">`</span>.
+<div class="highlight"><pre><span></span>error: unknown <span class="nb">type</span> name <span class="s1">&#39;char16_t&#39;</span>
+typedef char16_t CHAR16_T<span class="p">;</span><span class="sb">`</span>.
 </pre></div>
 <p>Turns out the compiler that ships with XCode 6 (Clang) does not set <code>char16_t</code>, as explained in this helpful Stack Overflow <a class="reference external" href="http://stackoverflow.com/questions/22367516/mex-compile-error-unknown-type-name-char16-t">post</a>. Instead of having to remember to set this to <code>UINT16_T</code> every time I compile a MEX file or editing the source, I decided to add this to my <code>mexopts.sh</code> file, which leads us to the third and final step:</p>
 <ol class="arabic simple" start="3">
@@ -71,20 +51,20 @@ typedef char16_t CHAR16_T;<span class="sb">`</span>.
     <p class=tags>This entry was tagged as
       <a href="/tag/development.html">development</a>
     </p>
-<div id="disqus_thread"></div>
-<script type="text/javascript">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
     var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
-
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
         dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
         
 <div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
@@ -94,16 +74,14 @@ typedef char16_t CHAR16_T;<span class="sb">`</span>.
   <p>
     <div class=social style="font-size: 27px;">
       <ul>
-        <script language="JavaScript">
+<script language="JavaScript">
           u = 'joao.eel';
           s = 'gmail.com';
           document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
         </script>
             <li><i class="icon-envelope icon-large"></i> </li>
-        </a>
-        <a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
-        <a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270"><li><i class="icon-linkedin-sign icon-large" ></i></li></a>
-        <a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        </a><a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a><a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270" target="_blank"><li><i class="icon-linkedin-sign icon-large" ></i></li></a><a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+
         <a href="/feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
       </ul>
     </div>

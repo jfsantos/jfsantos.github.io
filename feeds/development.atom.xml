@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor</title><link href="/" rel="alternate"></link><link href="/feeds/development.atom.xml" rel="self"></link><id>/</id><updated>2016-12-01T12:00:00-05:00</updated><entry><title>Model checkpointing using meta-graphs in TensorFlow</title><link href="/tensorflow-checkpointing.html" rel="alternate"></link><updated>2016-12-01T12:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:,2016-12-01:tensorflow-checkpointing.html</id><summary type="html">&lt;p&gt;Deep learning models usually take a while to train, even on GPUs, so being able
+<feed xmlns="http://www.w3.org/2005/Atom"><title>seaandsailor - development</title><link href="/" rel="alternate"></link><link href="/feeds/development.atom.xml" rel="self"></link><id>/</id><updated>2016-12-01T12:00:00-05:00</updated><entry><title>Model checkpointing using meta-graphs in TensorFlow</title><link href="/tensorflow-checkpointing.html" rel="alternate"></link><published>2016-12-01T12:00:00-05:00</published><updated>2016-12-01T12:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:None,2016-12-01:/tensorflow-checkpointing.html</id><summary type="html">&lt;p&gt;Deep learning models usually take a while to train, even on GPUs, so being able
+to checkpoint intermediate stages in training is really important. Frameworks
+like &lt;a href="http://keras.io"&gt;Keras&lt;/a&gt; usually offer functionality to store learned
+variables like weights and biases, but for resuming training for a checkpoint,
+one might also need to …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Deep learning models usually take a while to train, even on GPUs, so being able
 to checkpoint intermediate stages in training is really important. Frameworks
 like &lt;a href="http://keras.io"&gt;Keras&lt;/a&gt; usually offer functionality to store learned
 variables like weights and biases, but for resuming training for a checkpoint,
@@ -59,7 +63,12 @@ in order to continue training (in this case, the placeholders &lt;code&gt;x&lt;/
 the operations to compute the cost function, update the model, and do inference
 with it).&lt;/p&gt;
 &lt;p&gt;I wrote this example for myself but hope it will be useful for other people. If
-you are reading this, that is probably the case!&lt;/p&gt;</summary><category term="development"></category></entry><entry><title>A really brief introduction to audio signal processing in Julia</title><link href="/audiosp_julia.html" rel="alternate"></link><updated>2014-11-03T23:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:,2014-11-03:audiosp_julia.html</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+you are reading this, that is probably the case!&lt;/p&gt;</content><category term="blog"></category><category term="development"></category></entry><entry><title>A really brief introduction to audio signal processing in Julia</title><link href="/audiosp_julia.html" rel="alternate"></link><published>2014-11-03T23:00:00-05:00</published><updated>2014-11-03T23:00:00-05:00</updated><author><name>jfsantos</name></author><id>tag:None,2014-11-03:/audiosp_julia.html</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;If you are into scientific computing, you probably have already heard
+about &lt;a class="reference external" href="http://julialang.org"&gt;Julia&lt;/a&gt;, the magical language that aims
+to be (almost) as fast as C and as easy as MATLAB and Python to write. I
+have been playing with Julia for more than a year now, and I really …&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;If you are into scientific computing, you probably have already heard
 about &lt;a class="reference external" href="http://julialang.org"&gt;Julia&lt;/a&gt;, the magical language that aims
@@ -105,7 +114,7 @@ the Julia REPL:&lt;/p&gt;
 &lt;span class="c"&gt;# Loading and plotting an audio signal&lt;/span&gt;
 &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;wavread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;test.wav&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;:(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;xlabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Time [s]&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;
 &lt;img alt="" src="images/output_2_0.png" /&gt;
@@ -115,9 +124,9 @@ the Julia REPL:&lt;/p&gt;
 &lt;span class="c"&gt;# spectrogram with standard parameters for speech (25ms Hanning windows&lt;/span&gt;
 &lt;span class="c"&gt;# and 10ms overlap), then plots it and returns it .&lt;/span&gt;
 
-&lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="nf"&gt; plot_spectrogram&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="n"&gt;S&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spectrogram&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;[:,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="nb"&gt;convert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;25e-3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-                    &lt;span class="nb"&gt;convert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;10e-3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;hanning&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;plot_spectrogram&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;S&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;spectrogram&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;convert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;25e-3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                    &lt;span class="n"&gt;convert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;10e-3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;hanning&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;freq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;imshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;flipud&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;log10&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;power&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;))),&lt;/span&gt; &lt;span class="n"&gt;extent&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;first&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
@@ -137,11 +146,11 @@ the Julia REPL:&lt;/p&gt;
 &lt;span class="n"&gt;telephone_filter&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;digitalfilter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;responsetype&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;prototype&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="c"&gt;# Let's take a look at the filter response now&lt;/span&gt;
-&lt;span class="err"&gt;ω&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mf"&gt;0.01&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nb"&gt;pi&lt;/span&gt; &lt;span class="c"&gt;# variables can have Unicode names!&lt;/span&gt;
+&lt;span class="n"&gt;ω&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mf"&gt;0.01&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="nb"&gt;pi&lt;/span&gt; &lt;span class="c"&gt;# variables can have Unicode names!&lt;/span&gt;
               &lt;span class="c"&gt;# This is typed in the notebook as \omega + tab.&lt;/span&gt;
-&lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;freqz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;telephone_filter&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="err"&gt;ω&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;freqz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;telephone_filter&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ω&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="err"&gt;ω&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nb"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;log10&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fs&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ω&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nb"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;log10&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
 &lt;span class="n"&gt;xlabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Frequency [Hz]&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;ylabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Gain [dB]&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
@@ -156,9 +165,9 @@ the Julia REPL:&lt;/p&gt;
 &lt;/pre&gt;
 &lt;img alt="" src="images/output_6_0.png" /&gt;
 &lt;pre class="code python literal-block"&gt;
-&lt;span class="c"&gt;# IJulia still does not support playing audio, so we include&lt;/span&gt;
-&lt;span class="c"&gt;# some code to do it.&lt;/span&gt;
-&lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;AudioDisplay.jl&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# IJulia still does not support playing audio, so we include&lt;/span&gt;
+&lt;span class="c1"&gt;# some code to do it.&lt;/span&gt;
+&lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;AudioDisplay.jl&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="n"&gt;using&lt;/span&gt; &lt;span class="n"&gt;AudioDisplay&lt;/span&gt;
 
@@ -192,22 +201,25 @@ There is also a very active &lt;a class="reference external" href="https://group
 users&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I sincerely hope you find Julia interesting and worth of your time!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="development"></category></entry><entry><title>Configuring MATLAB to work with XCode 6 on Yosemite</title><link href="/matlab-xcode6.html" rel="alternate"></link><updated>2014-10-28T17:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2014-10-28:matlab-xcode6.html</id><summary type="html">&lt;p&gt;After I upgraded my Mac to Yosemite (10.10), I had a lot of trouble to get MATLAB 2013a working properly. First, I started getting a NullPointerException from Java when trying to start it. Turns out this was a problem with some Java classes used for drawing MATLAB's GUI and Mathworks released some &lt;a class="reference external" href="http://www.mathworks.com/support/bugreports/1098655"&gt;patches&lt;/a&gt; for MATLAB versions from R2012b to R2014a (the bug was fixed in R2014b).&lt;/p&gt;
+</content><category term="blog"></category><category term="development"></category></entry><entry><title>Configuring MATLAB to work with XCode 6 on Yosemite</title><link href="/matlab-xcode6.html" rel="alternate"></link><published>2014-10-28T17:00:00-04:00</published><updated>2014-10-28T17:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:None,2014-10-28:/matlab-xcode6.html</id><summary type="html">&lt;p&gt;After I upgraded my Mac to Yosemite (10.10), I had a lot of trouble to get MATLAB 2013a working properly. First, I started getting a NullPointerException from Java when trying to start it. Turns out this was a problem with some Java classes used for drawing MATLAB's GUI and …&lt;/p&gt;</summary><content type="html">&lt;p&gt;After I upgraded my Mac to Yosemite (10.10), I had a lot of trouble to get MATLAB 2013a working properly. First, I started getting a NullPointerException from Java when trying to start it. Turns out this was a problem with some Java classes used for drawing MATLAB's GUI and Mathworks released some &lt;a class="reference external" href="http://www.mathworks.com/support/bugreports/1098655"&gt;patches&lt;/a&gt; for MATLAB versions from R2012b to R2014a (the bug was fixed in R2014b).&lt;/p&gt;
 &lt;p&gt;Unfortunately, that was not the only issue. Since I also upgraded to XCode 6, I was not able to compile MEX files anymore. I checked the system requirements at the &lt;a class="reference external" href="http://www.mathworks.com/support/sysreq/previous_releases.html"&gt;Mathworks website&lt;/a&gt;  and it states that R2013a and R2013b support XCode 4.3 or higher, and R2014a supports either 4.6+ or 5.0. From my previous experience, I know sometimes these are &amp;quot;soft&amp;quot; requirements and I managed to make MATLAB work with unsupported compilers (like different versions of Visual Studio on Windows, or different versions of GCC on Linux). However, on a Mac the command &lt;code&gt;mex -setup&lt;/code&gt; only gives you an option to keep your current compiler configuration or copy the default file to your home folder. Here's what I did to make MATLAB work with XCode 6:&lt;/p&gt;
 &lt;ol class="arabic simple"&gt;
 &lt;li&gt;Run &lt;code&gt;mex -setup&lt;/code&gt; and ask it to copy the default &lt;code&gt;mexopts.sh&lt;/code&gt; to my home folder.&lt;/li&gt;
 &lt;li&gt;Edit &lt;code&gt;/Users/myusername/.matlab/R2013a/mexopts.sh&lt;/code&gt;, replacing all instances of &lt;code&gt;10.8&lt;/code&gt; to &lt;code&gt;10.10&lt;/code&gt; in the section corresponding to Mac 64 bits (i.e., everything after the line &lt;code&gt;maci64)&lt;/code&gt; and the end of the file).&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;After doing this, calling &lt;code&gt;mex&lt;/code&gt; worked, but I was still not able to compile my MEX files. The error message I got was the following:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;error: unknown &lt;span class="nb"&gt;type &lt;/span&gt;name &lt;span class="s1"&gt;&amp;#39;char16_t&amp;#39;&lt;/span&gt;
-typedef char16_t CHAR16_T;&lt;span class="sb"&gt;`&lt;/span&gt;.
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;error: unknown &lt;span class="nb"&gt;type&lt;/span&gt; name &lt;span class="s1"&gt;&amp;#39;char16_t&amp;#39;&lt;/span&gt;
+typedef char16_t CHAR16_T&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;.
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Turns out the compiler that ships with XCode 6 (Clang) does not set &lt;code&gt;char16_t&lt;/code&gt;, as explained in this helpful Stack Overflow &lt;a class="reference external" href="http://stackoverflow.com/questions/22367516/mex-compile-error-unknown-type-name-char16-t"&gt;post&lt;/a&gt;. Instead of having to remember to set this to &lt;code&gt;UINT16_T&lt;/code&gt; every time I compile a MEX file or editing the source, I decided to add this to my &lt;code&gt;mexopts.sh&lt;/code&gt; file, which leads us to the third and final step:&lt;/p&gt;
 &lt;ol class="arabic simple" start="3"&gt;
 &lt;li&gt;Replace the line that reads &lt;code&gt;CFLAGS=&amp;quot;$CFLAGS  -fexceptions&amp;quot;&lt;/code&gt; by &lt;code&gt;CFLAGS=&amp;quot;$CFLAGS  -fexceptions -Dchar16_t=UINT16_T&amp;quot;&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;After adding this, MATLAB happily compiled all of the MEX files I tested, even some I had generated with MATLAB Coder.&lt;/p&gt;
-</summary><category term="development"></category></entry><entry><title>My Emacs configuration for MATLAB, LaTeX, and Python</title><link href="/emacs-config.html" rel="alternate"></link><updated>2013-07-28T12:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2013-07-28:emacs-config.html</id><summary type="html">&lt;p&gt;Emacs is a main part of my daily life. I write code and papers using
+</content><category term="blog"></category><category term="development"></category></entry><entry><title>My Emacs configuration for MATLAB, LaTeX, and Python</title><link href="/emacs-config.html" rel="alternate"></link><published>2013-07-28T12:00:00-04:00</published><updated>2013-07-28T12:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:None,2013-07-28:/emacs-config.html</id><summary type="html">&lt;p&gt;Emacs is a main part of my daily life. I write code and papers using
+it, so you could say that anything that my research will leave
+(hopefully) for the next generations was probably typed using it. Not
+anybody loves Emacs, and I will not try to convince you to …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Emacs is a main part of my daily life. I write code and papers using
 it, so you could say that anything that my research will leave
 (hopefully) for the next generations was probably typed using it. Not
 anybody loves Emacs, and I will not try to convince you to use
@@ -219,7 +231,7 @@ using during the last years. Prelude is a sane base configuration that
 includes a lot of good things and saves a &lt;strong&gt;lot&lt;/strong&gt; of time. If you use
 any UNIX-like operating system, installing it is a matter of running
 this command:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;curl -L http://git.io/epre | sh
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl -L http://git.io/epre &lt;span class="p"&gt;|&lt;/span&gt; sh
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;as long as you already have Emacs 24 (if you are still using Emacs 23,
 go on and update it ASAP!). Note that this installs it to the default
@@ -232,7 +244,7 @@ whitespace characters with visible glyphs). To disable these (and to
 add anything to a Prelude-based Emacs configuration), edit (you may
 have to create it first) &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/personal/init.el&lt;/span&gt;&lt;/tt&gt; and add
 the following lines:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;;; Disable guru-mode (I like using arrows :p)
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;;; Disable guru-mode (I like using arrows :p)
 (setq prelude-guru nil)
 ;; Disable whitespace-mode
 (setq prelude-whitespace nil)
@@ -255,7 +267,7 @@ files and save them to &lt;tt class="docutils literal"&gt;&lt;span class="pre"&g
 to make Emacs automatically open &lt;tt class="docutils literal"&gt;.m&lt;/tt&gt; files using &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;matlab-mode&lt;/span&gt;&lt;/tt&gt;
 and configure &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;matlab-shell&lt;/span&gt;&lt;/tt&gt;, add the following lines to
 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;$HOME/.emacs.d/personal/init.el&lt;/span&gt;&lt;/tt&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;;; Setting up matlab-mode
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;;; Setting up matlab-mode
 (add-to-list &amp;#39;load-path &amp;quot;~/.emacs.d/personal/matlab-emacs&amp;quot;)
 (load-library &amp;quot;matlab-load&amp;quot;)
 (custom-set-variables
@@ -308,7 +320,7 @@ words, duplicate words and passive voice. You can install it by simply
 running the command &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;M-x&lt;/span&gt; &lt;span class="pre"&gt;package-install&lt;/span&gt; &lt;span class="pre"&gt;writegood-mode&lt;/span&gt;&lt;/tt&gt; directly
 from Emacs (as long as you are using Prelude as described previously).&lt;/p&gt;
 &lt;p&gt;This is the configuration I use for fine-tuning AUCTeX (use pdflatex by default, use RefTeX, configure viewers, enable &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;writegood-mode&lt;/span&gt;&lt;/tt&gt;):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;;; LaTeX configuration
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;;; LaTeX configuration
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
@@ -341,7 +353,11 @@ tutorial to get a grasp of it:
 useful even if you don't want to create your own extensions, but just
 add some fancy things to your Emacs config!).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="development"></category></entry><entry><title>WinPython: a portable scientific Python distribution for Windows</title><link href="/winpython.html" rel="alternate"></link><updated>2013-06-25T21:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2013-06-25:winpython.html</id><summary type="html">&lt;p&gt;Recently I developed a &lt;a class="reference external" href="http://bitbucket.org/jfsantos/sitest"&gt;piece of software&lt;/a&gt; for administering speech
+</content><category term="blog"></category><category term="development"></category></entry><entry><title>WinPython: a portable scientific Python distribution for Windows</title><link href="/winpython.html" rel="alternate"></link><published>2013-06-25T21:00:00-04:00</published><updated>2013-06-25T21:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:None,2013-06-25:/winpython.html</id><summary type="html">&lt;p&gt;Recently I developed a &lt;a class="reference external" href="http://bitbucket.org/jfsantos/sitest"&gt;piece of software&lt;/a&gt; for administering speech
+intelligibility listening tests and discovered a small issue: I am not
+an administrator of the computer that I am going to use for the tests,
+so I cannot install any software. Since the computer is running
+Windows, there is no …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Recently I developed a &lt;a class="reference external" href="http://bitbucket.org/jfsantos/sitest"&gt;piece of software&lt;/a&gt; for administering speech
 intelligibility listening tests and discovered a small issue: I am not
 an administrator of the computer that I am going to use for the tests,
 so I cannot install any software. Since the computer is running
@@ -371,7 +387,11 @@ portable distribution to a more &amp;quot;conventional&amp;quot; Python installa
 Windows by adding some keys to the registry (this is also done through
 the WinPython Control Panel). Also, both Python 2.7 and Python 3.3 are
 available, with support to 32 and 64 bit Windows XP/7/8.&lt;/p&gt;
-</summary><category term="development"></category></entry><entry><title>Using Vagrant to make reproducible development and test environments</title><link href="/using-vagrant.html" rel="alternate"></link><updated>2013-05-19T16:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:,2013-05-19:using-vagrant.html</id><summary type="html">&lt;p&gt;Working with research-grade software is hard sometimes. We all have
+</content><category term="blog"></category><category term="development"></category></entry><entry><title>Using Vagrant to make reproducible development and test environments</title><link href="/using-vagrant.html" rel="alternate"></link><published>2013-05-19T16:00:00-04:00</published><updated>2013-05-19T16:00:00-04:00</updated><author><name>jfsantos</name></author><id>tag:None,2013-05-19:/using-vagrant.html</id><summary type="html">&lt;p&gt;Working with research-grade software is hard sometimes. We all have
+heard before (more than once, probably) the &amp;quot;it worked perfectly on my
+computer&amp;quot; story. The problem is that setting up a development
+environment takes a lot of time, and usually you'll end up forgetting
+which libraries and pieces of software …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Working with research-grade software is hard sometimes. We all have
 heard before (more than once, probably) the &amp;quot;it worked perfectly on my
 computer&amp;quot; story. The problem is that setting up a development
 environment takes a lot of time, and usually you'll end up forgetting
@@ -444,7 +464,7 @@ configuration is very simple. To test it, just download both files,
 fire up a Git Bash session, go to this directory and run &lt;tt class="docutils literal"&gt;vagrant
 up&lt;/tt&gt;. This will start up the virtual machine and install all the
 required software on it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;Vagrant::Config.run do |config|
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Vagrant::Config.run do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
@@ -489,7 +509,7 @@ end
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;For this example, we will simply add commands to install GNU Octave on
 the VM to the file &lt;tt class="docutils literal"&gt;provision.sh&lt;/tt&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;export &lt;/span&gt;&lt;span class="nv"&gt;DEBIAN_FRONTEND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;noninteractive
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;DEBIAN_FRONTEND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;noninteractive
 apt-get update &amp;gt; /dev/null
 apt-get -y install octave
 &lt;/pre&gt;&lt;/div&gt;
@@ -520,4 +540,4 @@ check out this &lt;a class="reference external" href="https://github.com/gavinln
 inspired me to use VMs for software development in my research!). It
 sets up a VM with statistics and numerical libraries for Python.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="development"></category></entry></feed>
+</content><category term="blog"></category><category term="development"></category></entry></feed>

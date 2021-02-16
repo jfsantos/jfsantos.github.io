@@ -9,26 +9,6 @@
     <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/font-awesome.css" type="text/css"/>
-        
-    <script type= "text/javascript">
-        var s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
-        s[(window.opera ? "innerHTML" : "text")] =
-            "MathJax.Hub.Config({" + 
-            "    config: ['MMLorHTML.js']," + 
-            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
-            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
-            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-            "    tex2jax: { " +
-            "        processEscapes: true }, " +
-            "    'HTML-CSS': { " +
-            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
-            "    } " +
-            "}); ";
-        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
-    </script>
-
   </head>
   <body>
     <div class=container>
@@ -81,8 +61,7 @@ the complete dataset)</li>
 current, and next frame</li>
 </ul>
 <p>With this configuration, each example is a vector with
-<span class="math">\(160 + 3*62 = 346\)</span>
- values. The MLP was set-up and trained as
+<span class="math">\(160 + 3*62 = 346\)</span> values. The MLP was set-up and trained as
 follows:</p>
 <ul class="simple">
 <li>Two rectified linear hidden layers (the first with 500 and the second
@@ -91,8 +70,7 @@ with 100 units)</li>
 for each input)</li>
 <li>Training algorithm: SGD with fixed learning rate of 0.01, running for
 a maximum of 200 epochs (alternative convergence condition was set as
-10 iterations with improvement lower than <span class="math">\(1^{-10}\)</span>
-). The batch
+10 iterations with improvement lower than <span class="math">\(1^{-10}\)</span>). The batch
 size was of 512 examples.</li>
 </ul>
 <p>Total training time for this experiment was approximately 1.15 hours,
@@ -120,8 +98,7 @@ as using directly the test error I ended up with bursts as can be seen
 below. The following multiplicative factors were tested:
 <tt class="docutils literal">[0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]</tt>. As using high noise levels ends
 up corrupting too much the signal, I filtered them down to approximately
-the telephone bandwidth (300-4000 Hz) with a <span class="math">\(4^{th}\)</span>
- order
+the telephone bandwidth (300-4000 Hz) with a <span class="math">\(4^{th}\)</span> order
 Butterworth passband filter, just to reduce the overall effect of noisy
 sampling. For low noise multipliers, all I got was a short burst and
 then the output stays at zero. However, by increasing the noise level to
@@ -169,8 +146,7 @@ have been synthesized, it does sound like multiple speakers babbling. The respec
       Your browser does not support the audio element.
 </audio> </p><img alt="" src="images/exp_mlp_2.png" />
 <p>One interesting thing: I did the same procedure to generate an output
-during training, sometime around the <span class="math">\(130^{th}\)</span>
- iteration. The
+during training, sometime around the <span class="math">\(130^{th}\)</span> iteration. The
 output generated at that stage sounded much nicer than what I got
 after the training finished, but unfortunately the pickled model was
 overwritten because of the way I set up my YAML file, which overwrites
@@ -186,7 +162,68 @@ successful) tests I did using sparse coding coefficients instead of
 acoustic samples as inputs. I will also comment about some ideas to
 incorporate more advanced models in my experiments.</p>
 </div>
+<script type='text/javascript'>if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
 
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
     
 <div class=twitter>
 <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
@@ -195,20 +232,20 @@ incorporate more advanced models in my experiments.</p>
     <p class=tags>This entry was tagged as
       <a href="/tag/ift6266.html">ift6266</a>
     </p>
-<div id="disqus_thread"></div>
-<script type="text/javascript">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
     var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
-
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
         dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
         
 <div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
@@ -218,16 +255,14 @@ incorporate more advanced models in my experiments.</p>
   <p>
     <div class=social style="font-size: 27px;">
       <ul>
-        <script language="JavaScript">
+<script language="JavaScript">
           u = 'joao.eel';
           s = 'gmail.com';
           document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
         </script>
             <li><i class="icon-envelope icon-large"></i> </li>
-        </a>
-        <a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
-        <a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270"><li><i class="icon-linkedin-sign icon-large" ></i></li></a>
-        <a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        </a><a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a><a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270" target="_blank"><li><i class="icon-linkedin-sign icon-large" ></i></li></a><a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+
         <a href="/feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
       </ul>
     </div>

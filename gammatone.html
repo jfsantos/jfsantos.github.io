@@ -9,26 +9,6 @@
     <link rel="stylesheet" href="/theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="/theme/css/font-awesome.css" type="text/css"/>
-        
-    <script type= "text/javascript">
-        var s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
-        s[(window.opera ? "innerHTML" : "text")] =
-            "MathJax.Hub.Config({" + 
-            "    config: ['MMLorHTML.js']," + 
-            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
-            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
-            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-            "    tex2jax: { " +
-            "        processEscapes: true }, " +
-            "    'HTML-CSS': { " +
-            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
-            "    } " +
-            "}); ";
-        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
-    </script>
-
   </head>
   <body>
     <div class=container>
@@ -57,9 +37,7 @@ approach. First, the dictionary atoms were not localized in time: the
 atoms I learned from the data were waveforms spreading throughout the
 entire frame. This behavior has led to issues when reconstructing the
 signal, as nothing guarantees the last sample in the <span class="math">\(k^{th}\)</span>
-
 frame will be close to the first sample in the <span class="math">\(k+1^{th}\)</span>
-
 frame. The second issue was related to not using overlapped windows to
 split/resynthesize the signal. This is one of the main reasons that
 made the signals I generated previously so noisy.</p>
@@ -84,16 +62,11 @@ product of a <em>gamma</em> function and a cosine, or a <em>pure tone</em>):</p>
 g(t) = at^{n-1}e^{-2\pi b t}\cos(2 \pi ft + \phi)
 \end{equation*}
 </div>
-<p>In this equation, <span class="math">\(b\)</span>
- corresponds to the filter's bandwidth,
-<span class="math">\(n\)</span>
- is the filter order, <span class="math">\(f\)</span>
- is the central frequency, and
-<span class="math">\(\phi\)</span>
- is the phase of the carrier. The first two parameters can
+<p>In this equation, <span class="math">\(b\)</span> corresponds to the filter's bandwidth,
+<span class="math">\(n\)</span> is the filter order, <span class="math">\(f\)</span> is the central frequency, and
+<span class="math">\(\phi\)</span> is the phase of the carrier. The first two parameters can
 be fixed for the entire filterbank, while the center frequencies
-<span class="math">\(f\)</span>
- are usually defined according to the cochlea's critical
+<span class="math">\(f\)</span> are usually defined according to the cochlea's critical
 frequencies. One way of computing these frequencies is by using the
 Equivalent Rectangular Bandwidth (ERB), which gives an approximation
 to the bandwidths of the human auditory filters:</p>
@@ -102,9 +75,7 @@ to the bandwidths of the human auditory filters:</p>
 ERB_j = \frac{f_j}{Q_{ear}} + B_{min}
 \end{equation*}
 </div>
-<p>Here, <span class="math">\(Q_{ear} = 9.26449\)</span>
- and <span class="math">\(B_{min} = 24.7\)</span>
- are
+<p>Here, <span class="math">\(Q_{ear} = 9.26449\)</span> and <span class="math">\(B_{min} = 24.7\)</span> are
 constants corresponding to the Q factor and minimum bandwidth of human
 auditory filters.</p>
 <p>Gammatone functions are used in auditory modelling because they match
@@ -198,8 +169,7 @@ characteristics:</p>
 <li>Linear output layer with 950 units (one for each sparse coding coefficient);</li>
 <li>Training: batch gradient descent (batch size of 512 samples), with squared error objective;</li>
 <li>Termination criteria: 10 epochs with objective decrease lower than
-<span class="math">\(10^{-6}\)</span>
- or 200 epochs.</li>
+<span class="math">\(10^{-6}\)</span> or 200 epochs.</li>
 </ul>
 <p>However, something strange happened when I tried to train this
 network: it has converged after 10 epochs! Of course this would be too
@@ -252,8 +222,7 @@ the gammatonegram, which consists of the total gammatone band energy
 in all channels of our filterbank per frame. The figure below depicts
 how this is done:</p>
 <img alt="" class="align-center" src="images/filterbank.png" style="width: 700px;" />
-<p>Here, <span class="math">\(y_i[n], i = 1, \dots, 64\)</span>
- are the frame energies (sum of
+<p>Here, <span class="math">\(y_i[n], i = 1, \dots, 64\)</span> are the frame energies (sum of
 squared samples) for each gammatone channel (I'm using 64 channels
 here as this is what was used in <a class="citation-reference" href="#han2014" id="id4">[Han2014]</a> and can be a good starting
 point). As inputs of this network, we would use the gammatonegram of a
@@ -265,13 +234,10 @@ training a separate model for phases, either for an overall phase or a
 per-channel phase. Resynthesis is done according to the following
 signal flow diagram:</p>
 <img alt="" class="align-center" src="images/synthesis.png" style="width: 500px;" />
-<p>Here, <span class="math">\(p_i[n], i=1, \dots, 64\)</span>
- are vectors representing the
-phase of each channel and <span class="math">\(g_i[n], i=1, \dots, 64\)</span>
- are the
+<p>Here, <span class="math">\(p_i[n], i=1, \dots, 64\)</span> are vectors representing the
+phase of each channel and <span class="math">\(g_i[n], i=1, \dots, 64\)</span> are the
 amplitudes for each gammatone channel (which could be either the
-<span class="math">\(y_i[n]\)</span>
- values computed before for each frame or a smoothed
+<span class="math">\(y_i[n]\)</span> values computed before for each frame or a smoothed
 version of them).</p>
 <p>For the network architecture, I am planning on using an MLP (possibly
 with unsupervised pretraining) for the spectral envelopes. For the
@@ -305,7 +271,68 @@ spectral envelope model on my next post.</p>
 </tbody>
 </table>
 </div>
+<script type='text/javascript'>if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
 
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
     
 <div class=twitter>
 <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
@@ -314,20 +341,20 @@ spectral envelope model on my next post.</p>
     <p class=tags>This entry was tagged as
       <a href="/tag/ift6266.html">ift6266</a>
     </p>
-<div id="disqus_thread"></div>
-<script type="text/javascript">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
     var disqus_shortname = 'seaandsailor'; // required: replace example with your forum shortname
-
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
         dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
         
 <div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by jfsantos</p>
@@ -337,16 +364,14 @@ spectral envelope model on my next post.</p>
   <p>
     <div class=social style="font-size: 27px;">
       <ul>
-        <script language="JavaScript">
+<script language="JavaScript">
           u = 'joao.eel';
           s = 'gmail.com';
           document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
         </script>
             <li><i class="icon-envelope icon-large"></i> </li>
-        </a>
-        <a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
-        <a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270"><li><i class="icon-linkedin-sign icon-large" ></i></li></a>
-        <a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        </a><a href="http://twitter.com/seaandsailor" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a><a href="http://www.linkedin.com/pub/jo%C3%A3o-felipe-santos/9/3a/270" target="_blank"><li><i class="icon-linkedin-sign icon-large" ></i></li></a><a href="http://github.com/jfsantos" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+
         <a href="/feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
       </ul>
     </div>

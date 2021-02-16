@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>seaandsailor - blog</title><link>/</link><description></description><lastBuildDate>Thu, 01 Dec 2016 12:00:00 -0500</lastBuildDate><item><title>Model checkpointing using meta-graphs in TensorFlow</title><link>/tensorflow-checkpointing.html</link><description>&lt;p&gt;Deep learning models usually take a while to train, even on GPUs, so being able
+<rss version="2.0"><channel><title>seaandsailor - jfsantos</title><link>/</link><description></description><lastBuildDate>Thu, 01 Dec 2016 12:00:00 -0500</lastBuildDate><item><title>Model checkpointing using meta-graphs in TensorFlow</title><link>/tensorflow-checkpointing.html</link><description>&lt;p&gt;Deep learning models usually take a while to train, even on GPUs, so being able
 to checkpoint intermediate stages in training is really important. Frameworks
 like &lt;a href="http://keras.io"&gt;Keras&lt;/a&gt; usually offer functionality to store learned
 variables like weights and biases, but for resuming training for a checkpoint,
